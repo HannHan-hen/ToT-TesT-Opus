@@ -17,6 +17,7 @@ export const CHIMNEY = { x: 330, y: 88 };
 export function buildGround() {
   const c = offscreen(W, H);
   const ctx = c.getContext("2d");
+  ctx.imageSmoothingQuality = "high";
   const rng = makeRng(4242);
 
   // base grass with a soft sunlit gradient toward the top-left
@@ -77,6 +78,7 @@ export function buildGround() {
 export function buildEntities() {
   const c = offscreen(W, H);
   const ctx = c.getContext("2d");
+  ctx.imageSmoothingQuality = "high";
   const rng = makeRng(99);
   const ents = [];
   const flats = []; // ground-level tiles (soil) that must never cover sprites
@@ -119,20 +121,21 @@ export function buildEntities() {
   add("cottage", 300, 370, { w: 310 });
   add("crate", 1010, 250, { h: 78, fallback: "logpile" });
 
-  // crop plot: 3 x 4 tilled cells, turnips at assorted growth
-  // (each generated crop sprite includes its own soil patch)
+  // crop plot: one continuous tilled patch with plants y-sorted on top
+  addFlat("plot", 361, 902, { w: 318, fallback: "soilpatch" });
   const stages = [3, 3, 2, 3, 1, 3, 3, 2, 3, 0, 3, 3];
+  const stageW = [42, 62, 86, 102]; // sprout -> full turnip
   let i = 0;
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 3; col++) {
+      const st = stages[i++];
       const x = 265 + col * 96, y = 555 + row * 96;
-      addFlat(`crop_turnip_${stages[i]}`, x, y, { h: 102, fallback: "crop", stage: stages[i] });
-      i++;
+      add(`plant_turnip_${st}`, x, y, { h: stageW[st], fallback: "turnip", stage: st });
     }
   }
 
-  add("farmer", 790, 520, { h: 92, fallback: "character" });
-  add("chicken", 640, 320, { h: 52 });
+  add("farmer", 790, 520, { h: 122, fallback: "character" });
+  add("chicken", 640, 320, { h: 68 });
 
   // a few decorative touches inside the field
   add("rock", 920, 700, { h: 20, seed: 5 });

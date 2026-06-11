@@ -50,12 +50,17 @@ The shared style suffix used in every prompt:
 ## Pack 2 — the farm
 
 ### 2a. Turnip growth stages (one image, 4 in a row)
-> A 1x4 sprite sheet, left to right: turnip crop growth stages. Stage 1: two
-> tiny sprout leaves in dark tilled soil. Stage 2: a small leafy rosette.
-> Stage 3: lush leaves with the top of a purple-white turnip bulb peeking
-> out of the soil. Stage 4: a plump round white turnip with a purple crown
-> and a lush dark-green leaf rosette, mostly out of the soil. Each stage
-> includes its own small square patch of dark tilled soil. [style suffix]
+
+> **v2 — plants only, no soil.** The field is now one continuous dirt patch
+> rendered separately, so crops must come without ground attached.
+
+> A 1x4 sprite sheet, left to right: turnip plant growth stages on a plain
+> magenta background with NO soil, NO dirt, NO ground — just the plant,
+> as if pulled out for a sticker sheet. Stage 1: two tiny sprout leaves.
+> Stage 2: a small leafy rosette. Stage 3: a lush leaf rosette with a small
+> round purple-white turnip bulb at its base, bulb bottom flat. Stage 4: a
+> plump round white turnip with a purple crown and a big lush leaf rosette,
+> bulb bottom flat so it can sit in a furrow. [style suffix]
 
 ### 2b. Tilled soil tile (single)
 > A single square tile of dark tilled farm soil with three soft horizontal
@@ -82,10 +87,16 @@ The shared style suffix used in every prompt:
 > seen from the same high 3/4 angle as the attached cottage, slightly
 > turned to the right. [style suffix]
 
-### 3c. Log pile in a wooden crate (single)
-> A small rustic open wooden crate filled with stacked firewood logs, warm
-> brown wood matching the attached cottage, seen from the same high 3/4
-> angle. [style suffix]
+### 3c. Log pile in a wooden crate (re-roll, 2x2 grid)
+
+> **v2.** The empty crates read oddly in-scene; filled and lower works
+> better at this camera angle.
+
+> A 2x2 sprite sheet grid of low rustic wooden storage, warm brown wood
+> matching the attached cottage, seen from the same high 3/4 angle: a low
+> open crate filled with stacked firewood logs showing their round cut
+> ends; a crate overflowing with turnips; a low woven basket of vegetables;
+> a small stack of wooden barrels. [style suffix]
 
 ---
 

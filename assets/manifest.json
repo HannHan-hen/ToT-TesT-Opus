@@ -19,11 +19,11 @@
   "bush_pink": { "src": "assets/sprites/bush_pink.png", "variantOf": "bush" },
   "bush_white": { "src": "assets/sprites/bush_white.png", "variantOf": "bush" },
 
-  "crop_turnip_0": { "src": "assets/sprites/crop_turnip_0.png", "shadow": false },
-  "crop_turnip_1": { "src": "assets/sprites/crop_turnip_1.png", "shadow": false },
-  "crop_turnip_2": { "src": "assets/sprites/crop_turnip_2.png", "shadow": false },
-  "crop_turnip_3": { "src": "assets/sprites/crop_turnip_3.png", "shadow": false },
-  "soil": { "src": "assets/sprites/soil.png", "shadow": false },
+  "plot": { "src": "assets/sprites/plot.png", "shadow": false },
+  "plant_turnip_0": { "src": "assets/sprites/plant_turnip_0.png", "shadowScale": 0.3 },
+  "plant_turnip_1": { "src": "assets/sprites/plant_turnip_1.png", "shadowScale": 0.3 },
+  "plant_turnip_2": { "src": "assets/sprites/plant_turnip_2.png", "shadowScale": 0.32 },
+  "plant_turnip_3": { "src": "assets/sprites/plant_turnip_3.png", "shadowScale": 0.32 },
 
   "sign_fish": { "src": "assets/sprites/sign_fish.png", "shadowScale": 0.3 },
   "sign_sword": { "src": "assets/sprites/sign_sword.png", "shadowScale": 0.3 },

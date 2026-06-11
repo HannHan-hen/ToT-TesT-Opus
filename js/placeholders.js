@@ -160,6 +160,26 @@ export const painters = {
     }
   },
 
+  soilpatch(ctx, x, y, opts = {}) {
+    const w = opts.w ?? 300, h = w * 1.25;
+    ctx.fillStyle = "#4a3520";
+    ctx.beginPath();
+    ctx.roundRect(x - w / 2, y - h, w, h, 16);
+    ctx.fill();
+    ctx.fillStyle = "#5d4429";
+    ctx.beginPath();
+    ctx.roundRect(x - w / 2 + 5, y - h + 5, w - 10, h - 10, 12);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(58,40,22,0.8)";
+    ctx.lineWidth = 4;
+    for (let i = 1; i <= 7; i++) {
+      ctx.beginPath();
+      ctx.moveTo(x - w / 2 + 12, y - h + (h * i) / 8);
+      ctx.lineTo(x + w / 2 - 12, y - h + (h * i) / 8);
+      ctx.stroke();
+    }
+  },
+
   crop(ctx, x, y, opts = {}) {
     const s = opts.h ?? 90;
     painters.soil(ctx, x, y, { h: s * 0.8 });
