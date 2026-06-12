@@ -165,50 +165,57 @@ export function buildEntities() {
   const F = RING;
   const ringRng = makeRng(31337);
   const yTop = F.y + 26, yBot = F.y + F.h + 26;
+  const sideL = F.x + 6, sideR = F.x + F.w - 6;
+  const signTopX = W / 2 - 180, signBotX = W / 2, signSideY = H / 2 - 40;
   if (hasRealArt("fence_h1")) {
-    // native sprite widths at a shared scale; joints hide inside the posts
+    // open segments (single built-in post) chain left to right; each joint
+    // hides under the next segment's post, and runs close with the
+    // pixel-identical end post harvested from the original art
     const SCALE = 110 / 341;
-    const PIECE = { fence_h1: 341 * SCALE, fence_h2: 418 * SCALE };
-    const POST = 20;
-    const chain = (y, x, xEnd) => {
-      while (x < xEnd - 24) {
-        const key = ringRng() < 0.5 ? "fence_h1" : "fence_h2";
-        const w = PIECE[key];
-        if (x + w > xEnd) x = xEnd - w; // deepen the last overlap to fit
+    const OPEN = { fence_h1_open: 270 * SCALE, fence_h2_open: 335 * SCALE };
+    const chain = (y, x0, x1) => {
+      let x = x0;
+      while (x1 - x >= 40) {
+        let key = ringRng() < 0.5 ? "fence_h1_open" : "fence_h2_open";
+        if (OPEN[key] > x1 - x) key = "fence_h1_open";
+        if (OPEN[key] > x1 - x) x = x1 - OPEN[key]; // deepen final overlap
+        const w = OPEN[key];
         add(key, x + w / 2, y, { w });
-        x += w - POST;
+        x += w - 22;
       }
+      add("fence_endpost", Math.min(x + 11, x1 - 6), y + 2, { w: 25 });
     };
-    chain(yTop, F.x + 30, F.x + F.w - 30);
-    chain(yBot, F.x + 30, W / 2 - 56);
-    add("fence_gate", W / 2, yBot + 4, { w: 130 });
-    chain(yBot, W / 2 + 56 - POST, F.x + F.w - 30);
+    // top and bottom runs, with a gap where each sign stands
+    chain(yTop, sideL - 10, signTopX - 55);
+    chain(yTop, signTopX + 55, sideR + 10);
+    chain(yBot, sideL - 10, signBotX - 55);
+    chain(yBot, signBotX + 55, sideR + 10);
 
-    // receding side runs: stacked post pieces
-    for (const side of [F.x, F.x + F.w]) {
-      for (let y = F.y + 96; y < F.y + F.h - 4; y += 46) {
-        add("fence_v", side, y, { w: 30 });
-      }
+    // receding side runs: stacked post pieces, gap at the side signs;
+    // cuts end naturally because the stack is made of discrete posts
+    const vRun = (x, y0, y1) => {
+      for (let y = y0; y < y1; y += 68) add("fence_v", x, y, { w: 56 });
+    };
+    for (const x of [sideL, sideR]) {
+      vRun(x, yTop + 76, signSideY - 58);
+      vRun(x, signSideY + 160, yBot - 46);
     }
 
-    // tall corner pivots
-    const cw = 343 * SCALE;
-    add("fence_corner", F.x + 18, yTop + 6, { w: cw, flipX: true });
-    add("fence_corner", F.x + F.w - 18, yTop + 6, { w: cw });
-    add("fence_corner", F.x + 18, yBot + 6, { w: cw, flipX: true });
-    add("fence_corner", F.x + F.w - 18, yBot + 6, { w: cw });
-
-    // bushes and rocks demoted to accents in front of the fence
-    for (let i = 0; i < 24; i++) {
+    // bushes and rocks: accents beside the fence, never on it
+    for (let i = 0; i < 22; i++) {
       const horizontal = ringRng() < 0.6;
       let ax, ay;
       if (horizontal) {
-        ax = ringRng.range(F.x + 40, F.x + F.w - 40);
-        ay = (ringRng() < 0.5 ? yTop : yBot) + ringRng.range(8, 18);
-        if (ay > yBot && Math.abs(ax - W / 2) < 95) continue; // keep the gate clear
+        ax = ringRng.range(F.x + 50, F.x + F.w - 50);
+        const top = ringRng() < 0.5;
+        ay = (top ? yTop : yBot) + ringRng.range(8, 18);
+        const signX = top ? signTopX : signBotX;
+        if (Math.abs(ax - signX) < 80) continue; // keep sign gaps clear
       } else {
-        ax = (ringRng() < 0.5 ? F.x : F.x + F.w) + ringRng.range(-6, 6);
-        ay = ringRng.range(F.y + 110, F.y + F.h - 8);
+        const left = ringRng() < 0.5;
+        ax = left ? sideL + ringRng.range(16, 32) : sideR - ringRng.range(16, 32);
+        ay = ringRng.range(F.y + 120, F.y + F.h - 10);
+        if (Math.abs(ay - signSideY) < 70) continue;
       }
       if (ringRng() < 0.55) add("bush", ax, ay, { h: ringRng.range(34, 50), seed: ringRng.int(1, 9999), flowers: ringRng() < 0.5 });
       else add("rock", ax, ay, { h: ringRng.range(26, 44), seed: ringRng.int(1, 9999) });
@@ -223,11 +230,11 @@ export function buildEntities() {
     });
   }
 
-  // --- signs on the fence line, the bottom one beside the gate ---
-  add("sign_sword", W / 2 - 180, yTop + 14, { h: 78, fallback: "sign", icon: "tool" });
-  add("sign_fish", F.x + 10, H / 2 - 40, { h: 74, fallback: "sign", icon: "fish" });
-  add("sign_anvil", F.x + F.w - 10, H / 2 - 40, { h: 74, fallback: "sign", icon: "bird" });
-  add("sign_hops", W / 2 + 150, yBot + 12, { h: 78, fallback: "sign", icon: "leaf" });
+  // --- signs standing in their fence gaps ---
+  add("sign_sword", signTopX, yTop + 10, { h: 78, fallback: "sign", icon: "tool" });
+  add("sign_fish", sideL, signSideY + 46, { h: 74, fallback: "sign", icon: "fish" });
+  add("sign_anvil", sideR, signSideY + 46, { h: 74, fallback: "sign", icon: "bird" });
+  add("sign_hops", signBotX, yBot + 10, { h: 78, fallback: "sign", icon: "leaf" });;
 
   // --- farm contents ---
   add("cottage", 300, 370, { w: 310 });
