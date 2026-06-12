@@ -126,7 +126,9 @@ export function buildEntities() {
   // crop plot: one continuous tilled patch with plants y-sorted on top
   addFlat("plot", 361, 902, { w: 318, fallback: "soilpatch" });
   const stages = [3, 3, 2, 3, 1, 3, 3, 2, 3, 0, 3, 3];
-  const stageW = [52, 112, 116, 112]; // honors the sheet's own stage proportions
+  // sheet's own stage proportions, anchored so a mature plant is ~60% of
+  // farmer height — plants should never outscale the people
+  const stageW = [34, 73, 75, 73];
   let i = 0;
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 3; col++) {
