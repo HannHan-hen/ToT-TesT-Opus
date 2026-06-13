@@ -5,7 +5,7 @@
 import { makeRng, offscreen, alongRoundedRect } from "../util.js";
 import { drawSprite, getImage, hasRealArt } from "../assets.js";
 import { painters } from "../placeholders.js";
-import { W, H, CROPS, GOODS, state, float, stageOf, isMature, save } from "../state.js";
+import { W, H, CROPS, GOODS, state, float, stageOf, isMature, save, harvestYield, maybeStarlessDrop } from "../state.js";
 
 // fence ring geometry (the field boundary)
 const RING = { x: 88, y: 78, w: 1104, h: 804, r: 72 };
@@ -328,9 +328,11 @@ export const farm = {
           float(c.x, c.y - 26, `no ${seed} seeds`);
         }
       } else if (isMature(crop)) {
-        state.inv[crop.type]++;
+        const amt = harvestYield();
+        state.inv[crop.type] += amt;
         state.crops[i] = null;
-        float(c.x, c.y - 44, `+1 ${crop.type}`);
+        float(c.x, c.y - 44, `+${amt} ${crop.type}`);
+        if (maybeStarlessDrop("yield")) float(c.x, c.y - 72, "✦ Star-Bloom! ✦");
       } else {
         float(c.x, c.y - 30, `day ${state.day - crop.planted + 1} of ${CROPS[crop.type].days}`);
       }
@@ -342,6 +344,7 @@ export const farm = {
         state.chickenPetDay = state.day;
         state.inv.egg++;
         float(chicken.x, chicken.y - 50, "+1 egg  ♥");
+        if (maybeStarlessDrop("heart")) float(chicken.x, chicken.y - 78, "✦ Star-Heart! ✦");
         save();
       } else {
         float(chicken.x, chicken.y - 50, "happily fed — come back tomorrow");

@@ -3,7 +3,7 @@
 // farm's left fence; the way back is on the right shore.
 import { makeRng, offscreen } from "../util.js";
 import { drawSprite, getImage, hasRealArt } from "../assets.js";
-import { W, H, state, float, save } from "../state.js";
+import { W, H, state, float, save, maybeStarlessDrop } from "../state.js";
 
 const WALK = { x1: 118, y1: 150, x2: 1162, y2: 860 };
 const WATER = { cx: 480, cy: 500, rx: 300, ry: 220 };
@@ -150,6 +150,7 @@ export const lake = {
     if (Math.random() < 0.72) {
       state.inv.fish++;
       float(s.x, s.y - 30, "+1 fish!");
+      if (maybeStarlessDrop("damage")) float(s.x, s.y - 56, "✦ Star-Fang! ✦");
       save();
     } else {
       float(s.x, s.y - 30, "nothing's biting…");

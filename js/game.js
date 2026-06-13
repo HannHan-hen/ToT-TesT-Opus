@@ -2,7 +2,7 @@
 // and the shop/dialogue overlays. Map-specific scenery and interactions live
 // in js/maps/*; this module just drives them and owns everything shared.
 import { drawSprite } from "./assets.js";
-import { W, H, CROPS, SEED_ORDER, state, floats, ui, save, load, world } from "./state.js";
+import { W, H, CROPS, SEED_ORDER, STARLESS_ORDER, state, floats, ui, save, load, world, moveSpeed } from "./state.js";
 import { farm } from "./maps/farm.js";
 import { village } from "./maps/village.js";
 import { forest } from "./maps/forest.js";
@@ -13,7 +13,7 @@ const DAY_LENGTH = 60; // seconds
 const MAPS = { farm, village, forest, lake, ruins };
 const currentMap = () => MAPS[state.mapId];
 
-const player = { x: farm.spawn.x, y: farm.spawn.y, speed: 175, facing: 1, moving: false, target: null };
+const player = { x: farm.spawn.x, y: farm.spawn.y, facing: 1, moving: false, target: null };
 const keys = new Set();
 let justArrived = false;
 
@@ -149,8 +149,9 @@ export function updateGame(dt, t) {
   player.moving = !!(dx || dy);
   if (player.moving) {
     const len = Math.hypot(dx, dy);
-    const nx = player.x + (dx / len) * player.speed * dt;
-    const ny = player.y + (dy / len) * player.speed * dt;
+    const spd = moveSpeed();
+    const nx = player.x + (dx / len) * spd * dt;
+    const ny = player.y + (dy / len) * spd * dt;
     if (!blocked(nx, player.y)) player.x = nx;
     if (!blocked(player.x, ny)) player.y = ny;
     if (dx) player.facing = Math.sign(dx);
@@ -202,6 +203,9 @@ export function drawHud(ctx) {
   ctx.fillStyle = "#f3e6c8";
   ctx.font = "18px Georgia, serif";
   ctx.fillText(`${state.coins}g`, 134, 44);
+  const stars = STARLESS_ORDER.filter((k) => state.starless[k]).length;
+  ctx.fillStyle = stars === 5 ? "#ffe08a" : "rgba(243,230,200,0.85)";
+  ctx.fillText(`✦ ${stars}/5`, 212, 44);
 
   // seeds (selected highlighted), keyed 1·2·3
   ctx.font = "15px Georgia, serif";

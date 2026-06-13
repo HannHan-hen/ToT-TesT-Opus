@@ -16,6 +16,17 @@ export const CROPS = {
 };
 export const SEED_ORDER = ["radish", "turnip", "carrot"]; // number-key order
 
+// The Starless Set: five relics, each granting one passive effect. One waits
+// in the second boss room's cache; the other four drop rarely from chores.
+export const STARLESS = {
+  heart: { name: "Star-Heart", blurb: "+1 max heart", from: "petting the hen" },
+  damage: { name: "Star-Fang", blurb: "+1 sword damage", from: "fishing" },
+  reach: { name: "Star-Reach", blurb: "longer sword reach", from: "the Colossus's cache" },
+  speed: { name: "Star-Stride", blurb: "swifter on your feet", from: "foraging berries" },
+  yield: { name: "Star-Bloom", blurb: "crops sometimes yield extra", from: "harvesting" },
+};
+export const STARLESS_ORDER = ["heart", "damage", "reach", "speed", "yield"];
+
 // Everything sellable at the farm's shipping crate — crops plus the goods
 // foraged in the forest and caught at the lake.
 export const GOODS = {
@@ -46,14 +57,39 @@ export const state = {
   // combat / the ruins
   equip: { sword: false, armorTier: 0 }, // sword enables fighting; armor adds hearts
   hearts: 1,                              // current HP, in hearts
+  starless: { heart: false, damage: false, reach: false, speed: false, yield: false },
   ruinCleared: 0,                         // number of ruin rooms cleared (frontier)
   won: false,                             // defeated the Ruin Heart
   phase: null,  // day transition: {name:"out"|"hold"|"in", t}
   mapId: "farm",
 };
 
-// max HP grows with armor; one base heart plus one per armor tier
-export const maxHearts = () => 1 + state.equip.armorTier;
+// Derived stats — the single place where equipment and Starless relics
+// combine. Everything that used to be a scattered constant reads from here.
+const star = (k) => !!state.starless[k];
+export const maxHearts = () => 1 + state.equip.armorTier + (star("heart") ? 1 : 0);
+export const swordDamage = () => (state.equip.sword ? 1 : 0) + (star("damage") ? 1 : 0);
+export const swordReach = () => 26 + (star("reach") ? 34 : 0); // bonus beyond the body+enemy radii
+export const moveSpeed = () => 175 + (star("speed") ? 58 : 0);
+export const harvestYield = () => 1 + (star("yield") && Math.random() < 0.5 ? 1 : 0);
+
+// Grant a Starless relic (idempotent). The heart relic tops you up so the
+// new max is felt immediately.
+export function grantStarless(effect) {
+  if (state.starless[effect]) return false;
+  state.starless[effect] = true;
+  if (effect === "heart") state.hearts = maxHearts();
+  save();
+  return true;
+}
+
+// Chore drop roll: only after the first boss is down and you've some coin to
+// your name (the concept's "gold threshold"), and only for a relic you lack.
+export function maybeStarlessDrop(effect) {
+  if (state.starless[effect] || state.ruinCleared < 2 || state.coins < 80) return false;
+  if (Math.random() >= 0.18) return false;
+  return grantStarless(effect);
+}
 
 // transient feedback, drawn by the core HUD; any module may push to it
 export const floats = [];
@@ -84,7 +120,8 @@ export function save() {
       inv: state.inv, selectedSeed: state.selectedSeed, crops: state.crops,
       bushPicked: state.bushPicked, chickenPetDay: state.chickenPetDay,
       jayAffection: state.jayAffection, jayTalkedDay: state.jayTalkedDay,
-      equip: state.equip, ruinCleared: state.ruinCleared, won: state.won,
+      equip: state.equip, starless: state.starless,
+      ruinCleared: state.ruinCleared, won: state.won,
     }));
   } catch { /* storage unavailable — play on */ }
 }
@@ -102,6 +139,7 @@ export function load() {
         bushPicked: s.bushPicked ?? [], chickenPetDay: s.chickenPetDay ?? 0,
         jayAffection: s.jayAffection ?? 0, jayTalkedDay: s.jayTalkedDay ?? 0,
         equip: { sword: false, armorTier: 0, ...s.equip },
+        starless: { ...state.starless, ...s.starless },
         ruinCleared: s.ruinCleared ?? 0, won: s.won ?? false,
       });
     }

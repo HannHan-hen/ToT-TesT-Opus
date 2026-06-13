@@ -3,7 +3,7 @@
 // through the gap in the farm's bottom fence; the way back is at the top.
 import { makeRng, offscreen } from "../util.js";
 import { drawSprite, getImage, hasRealArt } from "../assets.js";
-import { W, H, state, float, save } from "../state.js";
+import { W, H, state, float, save, maybeStarlessDrop } from "../state.js";
 
 const WALK = { x1: 118, y1: 150, x2: 1162, y2: 860 };
 
@@ -143,6 +143,7 @@ export const forest = {
       state.inv.berry++;
       state.bushPicked[i] = state.day;
       float(b.x, b.y - 40, "+1 berry");
+      if (maybeStarlessDrop("speed")) float(b.x, b.y - 66, "✦ Star-Stride! ✦");
       save();
     } else {
       float(b.x, b.y - 40, "picked clean today");

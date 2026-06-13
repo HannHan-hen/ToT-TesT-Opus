@@ -232,6 +232,20 @@ The shared style suffix used in every prompt:
 > pillar, a mossy rubble pile. Dusky grey stone with warm torch-light on the
 > left. [style suffix]
 
+## Pack 9 — the Starless Set
+
+> The five relics currently show only as a ✦ tally and a sparkle pop-up; this
+> art is for a future relic display. Make them feel precious and otherworldly.
+
+### 9a. Starless relics (one image, 2x3 grid, 5 used)
+> A 2x3 sprite sheet grid of five small ornate magical relics on a plain
+> magenta background, same warm storybook style and thick soft outlines as
+> the attached cottage, each glowing with a pale star-light: a heart-shaped
+> amulet (Star-Heart), a curved fang/blade charm (Star-Fang), a ringed
+> gauntlet token (Star-Reach), a winged-boot charm (Star-Stride), and a
+> seed-and-leaf pendant (Star-Bloom). Leave the sixth cell empty.
+> [style suffix]
+
 ---
 
 ## Processing cheatsheet (my side)

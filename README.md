@@ -27,6 +27,11 @@ A small, cute browser farming game.
     to open the north door; rooms 2, 4 and 6 hold **bosses**, and the final
     chamber holds the **Ruin Heart**. Progress is saved between visits.
   - Carry berries and fish home and ship them at the crate, same as crops.
+- **The Starless Set** — five relics with permanent boosts (extra heart,
+  sword damage, reach, move speed, harvest yield). One waits in the second
+  boss's cache; the other four drop rarely from chores (harvest, hen,
+  foraging, fishing) once you've beaten the first boss and have some gold.
+  Your tally shows as **✦ n/5** in the status panel.
 - A day lasts about a minute; nights pass with a fade. Progress saves
   locally in your browser.
 
@@ -36,10 +41,11 @@ Playable today: the **farm** (multi-crop growing, the hen/egg chore,
 shipping), the **village** (Marigold's seeds, Bramble's weapons & armour,
 Old Pip, Jay), the **forest** (berry foraging), the **lake** (fishing), and
 the **ruins** (real-time combat through six rooms, three bosses, and the
-Ruin Heart finale). Still to come toward the full first version — the
-**Starless Set** relics, **farm threat** and crop-nibbler raids, gifting Jay
-and the relationship ending, and a proper **results / high-score screen** —
-all mapped out in [concept/concept.md](concept/concept.md), with the look
+Ruin Heart finale), and the **Starless Set** (five relics with permanent
+boosts). Still to come toward the full first version — **farm threat** and
+crop-nibbler raids, gifting Jay and the relationship ending, and a proper
+**results / high-score screen** — all mapped out in
+[concept/concept.md](concept/concept.md), with the look
 guided by the concept art beside it. We're building toward that, keeping
 every step as cute as the reference.
 

@@ -4,7 +4,7 @@
 // rooms 2/4/6 hold bosses, and the final chamber holds the Ruin Heart.
 // Room progress (ruinCleared) persists; a delve always starts at full hearts.
 import { makeRng, offscreen } from "../util.js";
-import { W, H, state, float, save, world, maxHearts } from "../state.js";
+import { W, H, state, float, save, world, maxHearts, swordDamage, swordReach, grantStarless } from "../state.js";
 
 // stone room interior the player can walk in
 const WALK = { x1: 252, y1: 244, x2: 1028, y2: 792 };
@@ -14,7 +14,6 @@ const BOT_DOOR = { x1: 596, y1: 752, x2: 700, y2: 792 };
 const SEAL = { x1: 590, y1: 244, x2: 706, y2: 312 }; // blocks the north door until cleared
 const ENTRY = { x: 648, y: 712 };
 const PLAYER_R = 26;
-const DAMAGE = 1;
 
 const ROOMS = [
   { name: "Mossy Hall", spawn: [["critter", 2]] },
@@ -68,6 +67,8 @@ function clearRoom() {
   if (cfg.final) { state.won = true; float(W / 2, 320, "✦ The Ruin Heart shatters! ✦"); }
   else if (cfg.boss) float(W / 2, 320, `${cfg.boss} falls — the way deepens`);
   else float(W / 2, 320, "the room falls silent");
+  // the Colossus (second boss) guards a Starless cache
+  if (room === 3 && grantStarless("reach")) float(W / 2, 360, "✦ a Starless relic — Star-Reach! ✦");
   save();
 }
 
@@ -189,9 +190,10 @@ export const ruins = {
     if (attackCd > 0) return;
     attackCd = 0.24; slash = 0.18;
     let gold = 0;
+    const dmg = swordDamage();
     enemies = enemies.filter((e) => {
-      if (dist(player.x, player.y, e.x, e.y) <= PLAYER_R + e.r + 26) {
-        e.hp -= DAMAGE;
+      if (dist(player.x, player.y, e.x, e.y) <= PLAYER_R + e.r + swordReach()) {
+        e.hp -= dmg;
         if (e.hp <= 0) { gold += e.gold; return false; }
       }
       return true;
