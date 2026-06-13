@@ -2,7 +2,7 @@
 
 ## Definition
 
-*Tale of Turnips* is a cozy, browser-playable farming adventure game. It must remain playable from a clickable browser link, with no install required for players; the current public play link documented by the project is:
+*Tale of Three Turnips* is a cozy, browser-playable farming adventure game. It must remain playable from a clickable browser link, with no install required for players; the current public play link documented by the project is:
 
 <https://hannhan-hen.github.io/tale-of-three-turnips/>
 
