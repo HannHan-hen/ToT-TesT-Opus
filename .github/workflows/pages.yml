@@ -1,21 +1,43 @@
-name: Publish to gh-pages
+name: Deploy to GitHub Pages
 
-# GitHub Pages serves the gh-pages branch; this mirrors main into it.
+# Builds a clean static site from the repo and publishes it with GitHub's
+# official Pages deployment. `enablement: true` turns Pages on via the API
+# the first time this runs, so no manual Settings step is needed.
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: pages-publish
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  publish:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - run: git push origin HEAD:gh-pages --force
+      - name: Stage the runtime site
+        # Only what the game actually loads at runtime — no raws, tools,
+        # concept art, or git history end up on the public site.
+        run: |
+          mkdir _site
+          cp -r index.html .nojekyll assets js _site/
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
