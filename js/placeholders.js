@@ -74,6 +74,20 @@ export const painters = {
         ctx.fill();
       }
     }
+    if (opts.berries) {
+      for (let i = 0; i < 6; i++) {
+        const bx = x + rng.range(-s * 0.5, s * 0.5);
+        const by = y - s * 0.42 + rng.range(-s * 0.28, s * 0.22);
+        ctx.fillStyle = "#b3243a";
+        ctx.beginPath();
+        ctx.arc(bx, by, s * 0.085, 0, 7);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,200,200,0.7)";
+        ctx.beginPath();
+        ctx.arc(bx - s * 0.03, by - s * 0.03, s * 0.03, 0, 7);
+        ctx.fill();
+      }
+    }
   },
 
   rock(ctx, x, y, opts = {}) {

@@ -5,7 +5,7 @@
 import { makeRng, offscreen, alongRoundedRect } from "../util.js";
 import { drawSprite, getImage, hasRealArt } from "../assets.js";
 import { painters } from "../placeholders.js";
-import { W, H, CROPS, state, float, stageOf, isMature, save } from "../state.js";
+import { W, H, CROPS, GOODS, state, float, stageOf, isMature, save } from "../state.js";
 
 // fence ring geometry (the field boundary)
 const RING = { x: 88, y: 78, w: 1104, h: 804, r: 72 };
@@ -264,7 +264,13 @@ export const farm = {
   exits: [
     // gap in the right-hand fence, by the anvil sign → the village
     { rect: { x1: 1118, y1: 392, x2: 1162, y2: 508 }, to: "village",
-      spawn: { x: 180, y: 470 }, label: "Village" },
+      spawn: { x: 180, y: 470 }, label: "the village" },
+    // left fence gap, by the fish sign → the lake
+    { rect: { x1: 118, y1: 392, x2: 158, y2: 508 }, to: "lake",
+      spawn: { x: 1080, y: 470 }, label: "the lake" },
+    // bottom fence gap, by the leaf sign → the forest
+    { rect: { x1: 560, y1: 816, x2: 720, y2: 854 }, to: "forest",
+      spawn: { x: 640, y: 250 }, label: "the forest" },
   ],
   buildGround,
   buildStatics,
@@ -328,7 +334,7 @@ export const farm = {
     if (nearBin(player)) {
       let gold = 0, count = 0;
       for (const t of Object.keys(state.inv)) {
-        gold += state.inv[t] * CROPS[t].sell;
+        gold += state.inv[t] * GOODS[t].price;
         count += state.inv[t];
         state.inv[t] = 0;
       }

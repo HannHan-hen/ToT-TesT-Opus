@@ -1,10 +1,11 @@
 # Asset prompt packs
 
-> **Status:** Packs 1–5 received and integrated. The village (Pack 6) and
-> its two new crops currently run on **procedural placeholders** — prompts
+> **Status:** Packs 1–5 received and integrated. The village, forest and
+> lake (Packs 6–7) currently run on **procedural placeholders** — prompts
 > below — and the shops temporarily reuse the cottage art. Remaining
-> procedural-only art: radish/carrot crops, the four villagers, dedicated
-> shop buildings; plus smoke, fog and light (painted in code by design).
+> procedural-only art: radish/carrot crops, the four villagers, shop
+> buildings, the berry bush; plus the water, smoke, fog and light (painted
+> in code by design).
 
 How this works: copy a prompt below into the image generator, attach the
 reference image noted, paste the result into the chat. I (Claude) run it
@@ -177,6 +178,24 @@ The shared style suffix used in every prompt:
 > door, and flower boxes. Right: a blacksmith's workshop with a stone
 > chimney, an anvil out front, and warm forge-light in the window.
 > [style suffix]
+
+## Pack 7 — forest & lake
+
+### 7a. Berry bushes (one image, 2 states side by side)
+> Two cute round leafy berry bushes side by side on a plain magenta
+> background, same style and high 3/4 angle as the attached cottage. Left:
+> the bush laden with clusters of glossy red berries. Right: the same bush
+> picked bare, just leaves. Warm golden light from the upper left.
+> [style suffix]
+
+### 7b. Lake props (one image, 2x2 grid)
+> A 2x2 sprite sheet grid of cute lakeside props, same style as the attached
+> cottage, high 3/4 angle: a clump of tall green reeds, a flat green lily pad
+> with a tiny white flower, a mossy stepping stone, a little wooden fishing
+> stake with a bobber. [style suffix]
+
+> The water itself is painted in code (like the smoke and fog), so it needs
+> no sprite — these are just the dressing along the shore.
 
 ---
 

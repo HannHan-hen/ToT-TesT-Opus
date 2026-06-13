@@ -5,9 +5,11 @@ import { drawSprite } from "./assets.js";
 import { W, H, CROPS, SEED_ORDER, state, floats, ui, save, load } from "./state.js";
 import { farm } from "./maps/farm.js";
 import { village } from "./maps/village.js";
+import { forest } from "./maps/forest.js";
+import { lake } from "./maps/lake.js";
 
 const DAY_LENGTH = 60; // seconds
-const MAPS = { farm, village };
+const MAPS = { farm, village, forest, lake };
 const currentMap = () => MAPS[state.mapId];
 
 const player = { x: farm.spawn.x, y: farm.spawn.y, speed: 175, facing: 1, moving: false, target: null };

@@ -13,23 +13,27 @@ A small, cute browser farming game.
   selected seed in empty cells and **harvest** mature ones.
 - Carry your produce to the **log crate** (top right) to ship it for gold —
   faster crops pay less, slower crops pay more.
-- Walk out through the **gap in the right-hand fence** to reach the
-  **village**: buy seeds from Marigold, hear tips from Old Pip, and say hello
-  to Jay. (Bramble's blacksmith opens once combat arrives.) Walk back through
-  the village gate to return home.
+- Each **gap in the fence** leads somewhere — walk through to travel:
+  - **Right → the village:** buy seeds from Marigold, hear tips from Old Pip,
+    say hello to Jay. (Bramble's blacksmith opens once combat arrives.)
+  - **Bottom → the forest:** **gather berries** from the bushes; they regrow
+    fresh each morning.
+  - **Left → the lake:** **cast a line** at the reedy fishing spots to catch
+    fish.
+  - Carry berries and fish home and ship them at the crate, same as crops.
 - A day lasts about a minute; nights pass with a fade. Progress saves
   locally in your browser.
 
 ## Where it's headed
 
-Playable today: the **farm** (multi-crop growing + shipping) and the
-**village** (Marigold's seed shop, Old Pip, Jay, Bramble). Still to come
-toward the full first version — the forest and foraging, the chicken/egg
-chore, fishing, the six-room ruins and its bosses, the Starless Set, farm
-threat, and romancing Jay — all mapped out in
-[concept/concept.md](concept/concept.md), with the look guided by the
-concept art beside it. We're building toward that, keeping every step as
-cute as the reference.
+Playable today: the **farm** (multi-crop growing + shipping), the
+**village** (Marigold's seed shop, Old Pip, Jay, Bramble), the **forest**
+(berry foraging), and the **lake** (fishing). Still to come toward the full
+first version — the chicken/egg chore, the six-room ruins and its bosses,
+the Starless Set, farm threat, and deepening the romance with Jay — all
+mapped out in [concept/concept.md](concept/concept.md), with the look guided
+by the concept art beside it. We're building toward that, keeping every step
+as cute as the reference.
 
 ## How it's built
 
