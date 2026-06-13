@@ -462,6 +462,104 @@ export const painters = {
     ctx.arc(x, y - s, s * 0.25, 0, 7);
     ctx.fill();
   },
+
+  enemy(ctx, x, y, opts = {}) {
+    // a ruin-critter: a dark gel blob with glowing eyes; bosses are bigger,
+    // horned and crowned in cracked light
+    const h = opts.h ?? 56;
+    const rng = makeRng(opts.seed ?? 1);
+    const r = h * 0.42;
+    const cy = y - r;
+    const boss = !!opts.boss;
+    shadow(ctx, x, y - 2, r * 1.2, r * 0.4, 0.3);
+    const dark = boss ? "#4a2545" : "#3b4163";
+    const lite = boss ? "#7a3f70" : "#5b6390";
+    blob(ctx, x, cy, r, dark, rng, 0.16);
+    blob(ctx, x - r * 0.2, cy - r * 0.25, r * 0.55, lite, rng, 0.18);
+    if (boss) {
+      ctx.fillStyle = dark; // horns
+      for (const sx of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(x + sx * r * 0.5, cy - r * 0.5);
+        ctx.lineTo(x + sx * r * 0.85, cy - r * 1.15);
+        ctx.lineTo(x + sx * r * 0.2, cy - r * 0.75);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+    // glowing eyes
+    const eye = boss ? "#ff5a5a" : "#ffd24a";
+    ctx.shadowColor = eye;
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = eye;
+    for (const sx of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(x + sx * r * 0.32, cy - r * 0.05, r * (boss ? 0.16 : 0.13), 0, 7);
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  },
+
+  ruindoor(ctx, x, y, opts = {}) {
+    // a stone archway; sealed shows a barred portcullis with a faint ward,
+    // open shows a dark passage with a warm beckoning glow
+    const w = opts.w ?? 150, h = w * 1.15;
+    const left = x - w / 2;
+    ctx.fillStyle = "#6b6360"; // pillars
+    ctx.fillRect(left, y - h, w * 0.16, h);
+    ctx.fillRect(x + w / 2 - w * 0.16, y - h, w * 0.16, h);
+    ctx.fillStyle = "#7a716b"; // lintel
+    ctx.fillRect(left, y - h, w, h * 0.16);
+    const innerX = left + w * 0.16, innerW = w - w * 0.32, innerTop = y - h + h * 0.16;
+    if (opts.open) {
+      const g = ctx.createLinearGradient(0, innerTop, 0, y);
+      g.addColorStop(0, "#2a2433");
+      g.addColorStop(1, "#5a4a2e");
+      ctx.fillStyle = g;
+      ctx.fillRect(innerX, innerTop, innerW, y - innerTop);
+      ctx.fillStyle = "rgba(255,210,140,0.25)";
+      ctx.fillRect(innerX, y - 22, innerW, 22);
+    } else {
+      ctx.fillStyle = "#181520";
+      ctx.fillRect(innerX, innerTop, innerW, y - innerTop);
+      ctx.strokeStyle = "#9a8fb0"; // bars
+      ctx.lineWidth = 5;
+      for (let i = 1; i <= 4; i++) {
+        const bx = innerX + (innerW * i) / 5;
+        ctx.beginPath(); ctx.moveTo(bx, innerTop); ctx.lineTo(bx, y); ctx.stroke();
+      }
+      ctx.strokeStyle = "rgba(150,120,200,0.4)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(innerX, innerTop, innerW, y - innerTop);
+    }
+  },
+
+  torch(ctx, x, y, opts = {}) {
+    const h = opts.h ?? 54;
+    ctx.fillStyle = "#5a4226";
+    ctx.fillRect(x - h * 0.04, y - h * 0.5, h * 0.08, h * 0.5);
+    const g = ctx.createRadialGradient(x, y - h * 0.55, 0, x, y - h * 0.55, h * 0.45);
+    g.addColorStop(0, "rgba(255,210,120,0.95)");
+    g.addColorStop(0.5, "rgba(240,140,50,0.8)");
+    g.addColorStop(1, "rgba(240,140,50,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(x, y - h * 0.6, h * 0.22, h * 0.34, 0, 0, 7);
+    ctx.fill();
+  },
+
+  slash(ctx, x, y, opts = {}) {
+    // a quick white crescent ring around the player, fading out (k: 0..1)
+    const r = opts.r ?? 70, k = opts.k ?? 1;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, k);
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.lineWidth = 6 * k + 1;
+    ctx.beginPath();
+    ctx.arc(x, y, r * (1.1 - k * 0.25), Math.PI * 0.15, Math.PI * 1.15);
+    ctx.stroke();
+    ctx.restore();
+  },
 };
 
 // Shared leaf rosette used by every root crop: a fan of stemmed leaves

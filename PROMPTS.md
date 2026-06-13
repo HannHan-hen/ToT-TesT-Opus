@@ -1,11 +1,12 @@
 # Asset prompt packs
 
-> **Status:** Packs 1–5 received and integrated. The village, forest and
-> lake (Packs 6–7) currently run on **procedural placeholders** — prompts
-> below — and the shops temporarily reuse the cottage art. Remaining
+> **Status:** Packs 1–5 received and integrated. The village, forest, lake
+> and ruins (Packs 6–8) currently run on **procedural placeholders** —
+> prompts below — and the shops temporarily reuse the cottage art. Remaining
 > procedural-only art: radish/carrot crops, the four villagers, shop
-> buildings, the berry bush; plus the water, smoke, fog and light (painted
-> in code by design).
+> buildings, the berry bush, the ruin enemies/bosses, the dungeon door and
+> stonework; plus the water, smoke, fog, light, hearts and slash (painted in
+> code by design).
 
 How this works: copy a prompt below into the image generator, attach the
 reference image noted, paste the result into the chat. I (Claude) run it
@@ -196,6 +197,40 @@ The shared style suffix used in every prompt:
 
 > The water itself is painted in code (like the smoke and fog), so it needs
 > no sprite — these are just the dressing along the shore.
+
+## Pack 8 — the ruins
+
+> Cute-but-spooky to match the storybook tone — menacing yet adorable, not
+> grim. Same warm upper-left light and thick soft outlines as the cottage.
+
+### 8a. Ruin critters (one image, 2x2 grid)
+> A 2x2 sprite sheet grid of four small cute-spooky dungeon monsters for a
+> storybook game, same style as the attached cottage: rounded gelatinous
+> blobs in dusky blue-purple stone tones with big glowing amber eyes, each a
+> little different (one round, one lumpy, one with little stubby legs, one
+> with a chipped-stone shell). Adorable but a touch menacing. [style suffix]
+
+### 8b. Ruin bosses (one image, 3 across)
+> Three larger cute-spooky dungeon bosses side by side on a plain magenta
+> background, same style as the attached cottage, seen from the same high 3/4
+> angle: the Ruin Warden (a stout armoured stone golem with glowing red
+> eyes), the Ruin Colossus (a huge mossy boulder-beast with heavy fists), and
+> the Ruin Sentinel (a tall floating cracked-statue knight). Menacing but
+> storybook-cute. [style suffix]
+
+### 8c. The Ruin Heart (single)
+> A single dramatic final-boss creature on a plain magenta background, same
+> style as the attached cottage: a large floating crystalline dark-violet
+> heart wrapped in cracked stone, pulsing with an inner red-gold glow, small
+> jagged shards orbiting it. Awe-inspiring but still storybook-cute.
+> [style suffix]
+
+### 8d. Dungeon kit (one image, 2x2 grid)
+> A 2x2 sprite sheet grid of cute dungeon set-pieces, same style as the
+> attached cottage, high 3/4 angle: a heavy stone archway door with an iron
+> portcullis (closed), the same archway open onto darkness, a cracked broken
+> pillar, a mossy rubble pile. Dusky grey stone with warm torch-light on the
+> left. [style suffix]
 
 ---
 

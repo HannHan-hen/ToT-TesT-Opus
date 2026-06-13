@@ -43,9 +43,17 @@ export const state = {
   chickenPetDay: 0, // last day the chicken was petted (one egg per day)
   jayAffection: 0,
   jayTalkedDay: 0,
+  // combat / the ruins
+  equip: { sword: false, armorTier: 0 }, // sword enables fighting; armor adds hearts
+  hearts: 1,                              // current HP, in hearts
+  ruinCleared: 0,                         // number of ruin rooms cleared (frontier)
+  won: false,                             // defeated the Ruin Heart
   phase: null,  // day transition: {name:"out"|"hold"|"in", t}
   mapId: "farm",
 };
+
+// max HP grows with armor; one base heart plus one per armor tier
+export const maxHearts = () => 1 + state.equip.armorTier;
 
 // transient feedback, drawn by the core HUD; any module may push to it
 export const floats = [];
@@ -54,6 +62,10 @@ export function float(x, y, text) { floats.push({ x, y, text, age: 0 }); }
 // a single active overlay (shop or dialogue), read by the core to render
 // and by key handling to drive. null when the world is interactive.
 export const ui = { menu: null };
+
+// the core wires up `travel` here at init so maps (the ruins) can send the
+// player to another map without importing the core (which would be a cycle)
+export const world = { travel: null };
 
 // Crops grow over their own number of days but always render across the
 // same four visual stages (sprout → leaves → budding → mature). Maturity is
@@ -72,6 +84,7 @@ export function save() {
       inv: state.inv, selectedSeed: state.selectedSeed, crops: state.crops,
       bushPicked: state.bushPicked, chickenPetDay: state.chickenPetDay,
       jayAffection: state.jayAffection, jayTalkedDay: state.jayTalkedDay,
+      equip: state.equip, ruinCleared: state.ruinCleared, won: state.won,
     }));
   } catch { /* storage unavailable — play on */ }
 }
@@ -88,6 +101,8 @@ export function load() {
         inv: { ...state.inv, ...s.inv },
         bushPicked: s.bushPicked ?? [], chickenPetDay: s.chickenPetDay ?? 0,
         jayAffection: s.jayAffection ?? 0, jayTalkedDay: s.jayTalkedDay ?? 0,
+        equip: { sword: false, armorTier: 0, ...s.equip },
+        ruinCleared: s.ruinCleared ?? 0, won: s.won ?? false,
       });
     }
   } catch { /* fresh farm */ }

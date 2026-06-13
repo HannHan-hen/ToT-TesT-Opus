@@ -5,7 +5,7 @@
 import { makeRng, offscreen } from "../util.js";
 import { drawSprite, getImage, hasRealArt } from "../assets.js";
 import { painters } from "../placeholders.js";
-import { W, H, CROPS, SEED_ORDER, state, float, ui, save } from "../state.js";
+import { W, H, CROPS, SEED_ORDER, state, ui, save, maxHearts } from "../state.js";
 
 const RING = { x: 88, y: 78, w: 1104, h: 804, r: 72 };
 const WALK = { x1: 118, y1: 172, x2: 1162, y2: 840 };
@@ -191,16 +191,32 @@ export const village = {
     if (n.kind === "shop") {
       ui.menu = {
         type: "shop", title: "Marigold's Seeds",
-        items: SEED_ORDER.map((s) => ({ seed: s, label: `${CROPS[s].name} (${CROPS[s].days}-day)`, price: CROPS[s].seed })),
+        items: SEED_ORDER.map((s) => ({
+          label: `${CROPS[s].name} seeds (${CROPS[s].days}-day)`, price: CROPS[s].seed,
+          apply: () => { state.seeds[s]++; }, bought: `bought 1 ${s} seed`,
+        })),
         note: "number to buy · Esc to leave",
       };
       return;
     }
     if (n.kind === "smith") {
-      ui.menu = { type: "dialogue", name: "Bramble", page: 0, lines: [
-        "Bramble looks up from the forge.",
-        "\"Swords and armour for the ruins? Aye — once you've coin to spend. My wares aren't ready just yet.\"",
-      ] };
+      ui.menu = {
+        type: "shop", title: "Bramble's Forge",
+        items: [
+          { label: "Basic Sword — fight in the ruins", price: 30,
+            soldOut: () => state.equip.sword, apply: () => { state.equip.sword = true; },
+            bought: "the sword is yours — to the ruins!" },
+          { label: "Leather Tunic — +1 heart", price: 25,
+            soldOut: () => state.equip.armorTier >= 1,
+            apply: () => { state.equip.armorTier = Math.max(state.equip.armorTier, 1); state.hearts = maxHearts(); },
+            bought: "leather donned (+1 heart)" },
+          { label: "Iron Vest — +1 heart", price: 60,
+            soldOut: () => state.equip.armorTier >= 2,
+            apply: () => { state.equip.armorTier = 2; state.hearts = maxHearts(); },
+            bought: "iron strapped on (+1 heart)" },
+        ],
+        note: "number to buy · Esc to leave",
+      };
       return;
     }
     if (n.kind === "pip") {

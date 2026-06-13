@@ -273,6 +273,10 @@ export const farm = {
     // bottom fence gap, by the leaf sign → the forest
     { rect: { x1: 560, y1: 816, x2: 720, y2: 854 }, to: "forest",
       spawn: { x: 640, y: 250 }, label: "the forest" },
+    // top fence gap, by the sword sign → the ruins (a sword is required)
+    { rect: { x1: 410, y1: 132, x2: 510, y2: 176 }, to: "ruins",
+      spawn: { x: 648, y: 712 }, label: "the ruins",
+      guard: () => state.equip.sword ? null : "the ruins are dangerous — buy a sword from Bramble first" },
   ],
   buildGround,
   buildStatics,

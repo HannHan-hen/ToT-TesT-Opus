@@ -2,14 +2,15 @@
 // and the shop/dialogue overlays. Map-specific scenery and interactions live
 // in js/maps/*; this module just drives them and owns everything shared.
 import { drawSprite } from "./assets.js";
-import { W, H, CROPS, SEED_ORDER, state, floats, ui, save, load } from "./state.js";
+import { W, H, CROPS, SEED_ORDER, state, floats, ui, save, load, world } from "./state.js";
 import { farm } from "./maps/farm.js";
 import { village } from "./maps/village.js";
 import { forest } from "./maps/forest.js";
 import { lake } from "./maps/lake.js";
+import { ruins } from "./maps/ruins.js";
 
 const DAY_LENGTH = 60; // seconds
-const MAPS = { farm, village, forest, lake };
+const MAPS = { farm, village, forest, lake, ruins };
 const currentMap = () => MAPS[state.mapId];
 
 const player = { x: farm.spawn.x, y: farm.spawn.y, speed: 175, facing: 1, moving: false, target: null };
@@ -26,8 +27,10 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 export function initGame() {
   window.__tot = state; // debug handle
   load();
+  world.travel = enterMap; // let maps (the ruins) move the player
   const sp = currentMap().spawn;
   player.x = sp.x; player.y = sp.y;
+  currentMap().enter?.(player);
 
   addEventListener("keydown", onKeyDown);
   addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
@@ -51,7 +54,7 @@ function menuKey(key, k) {
   if (key === "Escape" || k === "q") { ui.menu = null; return; }
   if (m.type === "shop") {
     const d = "123456789".indexOf(key);
-    if (d >= 0 && d < m.items.length) buySeed(m, m.items[d]);
+    if (d >= 0 && d < m.items.length) buyItem(m, m.items[d]);
     return;
   }
   if (m.type === "dialogue") {
@@ -62,15 +65,15 @@ function menuKey(key, k) {
   }
 }
 
-function buySeed(menu, item) {
-  if (state.coins >= item.price) {
-    state.coins -= item.price;
-    state.seeds[item.seed]++;
-    menu.bought = `bought 1 ${item.seed}`;
-    save();
-  } else {
-    menu.bought = "not enough gold";
-  }
+// Generic shop purchase: each item carries its own effect and an optional
+// sold-out check, so Marigold (seeds) and Bramble (gear) share one flow.
+function buyItem(menu, item) {
+  if (item.soldOut && item.soldOut()) { menu.bought = "already owned"; return; }
+  if (state.coins < item.price) { menu.bought = "not enough gold"; return; }
+  state.coins -= item.price;
+  item.apply();
+  menu.bought = item.bought ?? "purchased";
+  save();
 }
 
 function interact() {
@@ -93,11 +96,14 @@ function blocked(x, y) {
 
 const inRect = (x, y, r) => x > r.x1 && x < r.x2 && y > r.y1 && y < r.y2;
 
-function travel(exit) {
-  state.mapId = exit.to;
-  player.x = exit.spawn.x; player.y = exit.spawn.y;
+// Move the player to another map, position them, and run its enter hook.
+// Exposed via world.travel so the ruins can send the player home.
+function enterMap(to, spawn) {
+  state.mapId = to;
+  if (spawn) { player.x = spawn.x; player.y = spawn.y; }
   player.target = null;
   justArrived = true;
+  MAPS[to].enter?.(player);
   save();
 }
 
@@ -150,13 +156,13 @@ export function updateGame(dt, t) {
     if (dx) player.facing = Math.sign(dx);
   }
 
-  // map travel through fence openings
-  const exits = currentMap().exits;
-  const onExit = exits.find((ex) => inRect(player.x, player.y, ex.rect));
-  if (onExit && !justArrived) travel(onExit);
+  // map travel through fence openings (a guarded exit, like the ruins
+  // without a sword, blocks travel and shows its reason in the hint)
+  const onExit = currentMap().exits.find((ex) => inRect(player.x, player.y, ex.rect));
+  if (onExit && !justArrived && !(onExit.guard && onExit.guard())) enterMap(onExit.to, onExit.spawn);
   else if (!onExit) justArrived = false;
 
-  currentMap().update(dt, t);
+  currentMap().update(dt, t, player);
 
   state.time += dt;
   if (state.time >= DAY_LENGTH) state.phase = { name: "out", t: 0 };
@@ -240,9 +246,67 @@ export function drawHud(ctx) {
   }
   ctx.textAlign = "left";
 
+  drawCombat(ctx);
   if (ui.menu) drawMenu(ctx);
   drawNightFade(ctx);
   ctx.restore();
+}
+
+// Ruins overlay: the sword slash over the player, hearts, room banner, and a
+// boss health bar. Driven by the map's hud()/effect() so other maps stay clean.
+function drawCombat(ctx) {
+  const map = currentMap();
+  if (!map.hud) return;
+  const fx = map.effect?.(player);
+  if (fx) drawSprite(ctx, fx.key, fx.x, fx.y, fx.opts);
+  const info = map.hud(player);
+
+  // room banner, top-center
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#f3e6c8";
+  ctx.font = "20px Georgia, serif";
+  ctx.shadowColor = "rgba(0,0,0,0.7)"; ctx.shadowBlur = 6;
+  ctx.fillText(`${info.name}  ·  room ${info.room}/${info.total}`, W / 2, 40);
+  ctx.shadowBlur = 0;
+
+  // hearts, top-right
+  for (let i = 0; i < info.max; i++) {
+    const hx = W - 40 - i * 34, hy = 34;
+    ctx.fillStyle = i < info.hearts ? "#e0405a" : "rgba(40,28,30,0.7)";
+    ctx.strokeStyle = "rgba(0,0,0,0.5)"; ctx.lineWidth = 2;
+    heart(ctx, hx, hy, 12);
+    ctx.fill(); ctx.stroke();
+  }
+
+  // boss health bar
+  if (info.boss) {
+    const bw = 460, bx = (W - bw) / 2, by = H - 70;
+    ctx.fillStyle = "rgba(20,12,20,0.8)";
+    ctx.fillRect(bx, by, bw, 16);
+    ctx.fillStyle = "#b3243a";
+    ctx.fillRect(bx, by, bw * Math.max(0, info.bossHp), 16);
+    ctx.strokeStyle = "rgba(243,230,200,0.5)"; ctx.lineWidth = 2;
+    ctx.strokeRect(bx, by, bw, 16);
+    ctx.fillStyle = "#ffd9b0";
+    ctx.font = "16px Georgia, serif";
+    ctx.fillText(info.boss, W / 2, by - 6);
+  }
+
+  if (info.won) {
+    ctx.fillStyle = "#ffe7a0";
+    ctx.font = "30px Georgia, serif";
+    ctx.fillText("✦ Vanquisher of the Ruin Heart ✦", W / 2, 84);
+  }
+  ctx.shadowBlur = 0;
+  ctx.textAlign = "left";
+}
+
+function heart(ctx, x, y, s) {
+  ctx.beginPath();
+  ctx.moveTo(x, y + s * 0.3);
+  ctx.bezierCurveTo(x - s, y - s * 0.6, x - s * 0.5, y - s, x, y - s * 0.35);
+  ctx.bezierCurveTo(x + s * 0.5, y - s, x + s, y - s * 0.6, x, y + s * 0.3);
+  ctx.closePath();
 }
 
 function hintText() {
@@ -253,7 +317,8 @@ function hintText() {
   for (const ex of map.exits) {
     const r = ex.rect;
     if (player.x > r.x1 - 70 && player.x < r.x2 + 70 && player.y > r.y1 - 70 && player.y < r.y2 + 70) {
-      return `↦ walk through to ${ex.label}`;
+      const blocked = ex.guard && ex.guard();
+      return blocked || `↦ walk through to ${ex.label}`;
     }
   }
   return "WASD / arrows — move · Space — interact · 1·2·3 — pick seed";

@@ -15,26 +15,33 @@ A small, cute browser farming game.
   faster crops pay less, slower crops pay more.
 - **Pet the hen** once a day for a fresh **egg** to sell.
 - Each **gap in the fence** leads somewhere — walk through to travel:
-  - **Right → the village:** buy seeds from Marigold, hear tips from Old Pip,
-    say hello to Jay. (Bramble's blacksmith opens once combat arrives.)
+  - **Right → the village:** buy seeds from Marigold, buy a **sword and
+    armour** from Bramble's forge, hear tips from Old Pip, say hello to Jay.
   - **Bottom → the forest:** **gather berries** from the bushes; they regrow
     fresh each morning.
   - **Left → the lake:** **cast a line** at the reedy fishing spots to catch
     fish.
+  - **Top → the ruins:** a stone dungeon (a **sword from Bramble** is
+    required). Mash **Space** to swing at the ruin-critters, dodge their
+    touch — each hit costs a **heart** (armour buys you more). Clear a room
+    to open the north door; rooms 2, 4 and 6 hold **bosses**, and the final
+    chamber holds the **Ruin Heart**. Progress is saved between visits.
   - Carry berries and fish home and ship them at the crate, same as crops.
 - A day lasts about a minute; nights pass with a fade. Progress saves
   locally in your browser.
 
 ## Where it's headed
 
-Playable today: the **farm** (multi-crop growing + shipping), the
-**village** (Marigold's seed shop, Old Pip, Jay, Bramble), the **forest**
-(berry foraging), and the **lake** (fishing). Still to come toward the full
-first version — the chicken/egg chore, the six-room ruins and its bosses,
-the Starless Set, farm threat, and deepening the romance with Jay — all
-mapped out in [concept/concept.md](concept/concept.md), with the look guided
-by the concept art beside it. We're building toward that, keeping every step
-as cute as the reference.
+Playable today: the **farm** (multi-crop growing, the hen/egg chore,
+shipping), the **village** (Marigold's seeds, Bramble's weapons & armour,
+Old Pip, Jay), the **forest** (berry foraging), the **lake** (fishing), and
+the **ruins** (real-time combat through six rooms, three bosses, and the
+Ruin Heart finale). Still to come toward the full first version — the
+**Starless Set** relics, **farm threat** and crop-nibbler raids, gifting Jay
+and the relationship ending, and a proper **results / high-score screen** —
+all mapped out in [concept/concept.md](concept/concept.md), with the look
+guided by the concept art beside it. We're building toward that, keeping
+every step as cute as the reference.
 
 ## How it's built
 
