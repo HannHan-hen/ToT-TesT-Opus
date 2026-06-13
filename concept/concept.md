@@ -4,7 +4,7 @@
 
 *Tale of Three Turnips* is a cozy, browser-playable farming adventure game. It must remain playable from a clickable browser link, with no install required for players; the current public play link documented by the project is:
 
-<https://hannhan-hen.github.io/tale-of-three-turnips/>
+<https://hannhan-hen.github.io/ToT-TesT-Opus/>
 
 The game runs entirely in the browser, saves progress in `localStorage`, and has no backend or accounts.
 

@@ -1,8 +1,8 @@
-# Turnip Hollow 🌱
+# Tale of Three Turnips 🌱
 
 A small, cute browser farming game.
 
-**Play:** https://hannhan-hen.github.io/ToT-TesT/
+**Play:** https://hannhan-hen.github.io/ToT-TesT-Opus/
 
 ## How to play
 
@@ -13,6 +13,15 @@ A small, cute browser farming game.
 - A day lasts about a minute; nights pass with a fade.
 - Carry your turnips to the **log crate** (top right) to ship them for gold.
 - Progress saves locally in your browser.
+
+## Where it's headed
+
+What's playable today is the **farm** and its farming loop. The full first
+version — village shops, foraging, fishing, the six-room ruins and its
+bosses, the Starless Set, farm threat, and romancing Jay — is mapped out in
+[concept/concept.md](concept/concept.md), with the look guided by the
+concept art beside it. We're building toward that, keeping every step as
+cute as the reference.
 
 ## How it's built
 
