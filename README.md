@@ -13,6 +13,7 @@ A small, cute browser farming game.
   selected seed in empty cells and **harvest** mature ones.
 - Carry your produce to the **log crate** (top right) to ship it for gold —
   faster crops pay less, slower crops pay more.
+- **Pet the hen** once a day for a fresh **egg** to sell.
 - Each **gap in the fence** leads somewhere — walk through to travel:
   - **Right → the village:** buy seeds from Marigold, hear tips from Old Pip,
     say hello to Jay. (Bramble's blacksmith opens once combat arrives.)

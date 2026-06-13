@@ -24,6 +24,7 @@ export const GOODS = {
   carrot: { name: "carrot", price: 13 },
   berry: { name: "berry", price: 5 },
   fish: { name: "fish", price: 9 },
+  egg: { name: "egg", price: 7 },
 };
 
 const SAVE_KEY = "tale-of-three-turnips-v2";
@@ -34,11 +35,12 @@ export const state = {
   coins: 0,
   // start with the concept's 12 turnip seeds
   seeds: { radish: 0, turnip: 12, carrot: 0 },
-  inv: { radish: 0, turnip: 0, carrot: 0, berry: 0, fish: 0 }, // sold at the crate
+  inv: { radish: 0, turnip: 0, carrot: 0, berry: 0, fish: 0, egg: 0 }, // sold at the crate
   selectedSeed: "turnip",
   // the concept-art arrangement, immediately playable (all turnips)
   crops: [3, 2, 3, 1, 3, 2, 3, 0, 3].map((s) => ({ type: "turnip", planted: 4 - s })),
   bushPicked: [], // forest berry bushes: day each was last foraged
+  chickenPetDay: 0, // last day the chicken was petted (one egg per day)
   jayAffection: 0,
   jayTalkedDay: 0,
   phase: null,  // day transition: {name:"out"|"hold"|"in", t}
@@ -68,7 +70,7 @@ export function save() {
     localStorage.setItem(SAVE_KEY, JSON.stringify({
       v: 2, day: state.day, coins: state.coins, seeds: state.seeds,
       inv: state.inv, selectedSeed: state.selectedSeed, crops: state.crops,
-      bushPicked: state.bushPicked,
+      bushPicked: state.bushPicked, chickenPetDay: state.chickenPetDay,
       jayAffection: state.jayAffection, jayTalkedDay: state.jayTalkedDay,
     }));
   } catch { /* storage unavailable — play on */ }
@@ -84,7 +86,7 @@ export function load() {
         day: s.day, coins: s.coins, selectedSeed: s.selectedSeed, crops: s.crops,
         seeds: { ...state.seeds, ...s.seeds },
         inv: { ...state.inv, ...s.inv },
-        bushPicked: s.bushPicked ?? [],
+        bushPicked: s.bushPicked ?? [], chickenPetDay: s.chickenPetDay ?? 0,
         jayAffection: s.jayAffection ?? 0, jayTalkedDay: s.jayTalkedDay ?? 0,
       });
     }

@@ -254,6 +254,8 @@ function nearestCell(player) {
   return bd < 62 ? best : -1;
 }
 const nearBin = (player) => dist(player.x, player.y, BIN.x, BIN.y) < 115;
+const nearChicken = (player) => dist(player.x, player.y, chicken.x, chicken.y) < 84;
+const chickenPetted = () => state.chickenPetDay >= state.day;
 
 export const farm = {
   id: "farm",
@@ -331,6 +333,17 @@ export const farm = {
       save();
       return;
     }
+    if (nearChicken(player)) {
+      if (!chickenPetted()) {
+        state.chickenPetDay = state.day;
+        state.inv.egg++;
+        float(chicken.x, chicken.y - 50, "+1 egg  ♥");
+        save();
+      } else {
+        float(chicken.x, chicken.y - 50, "happily fed — come back tomorrow");
+      }
+      return;
+    }
     if (nearBin(player)) {
       let gold = 0, count = 0;
       for (const t of Object.keys(state.inv)) {
@@ -358,9 +371,12 @@ export const farm = {
       if (isMature(crop)) return "Space — harvest!";
       return `growing… day ${state.day - crop.planted + 1} of ${CROPS[crop.type].days}`;
     }
+    if (nearChicken(player)) {
+      return chickenPetted() ? "the hen is content for today" : "Space — pet the hen for an egg";
+    }
     if (nearBin(player)) {
       const count = Object.values(state.inv).reduce((a, b) => a + b, 0);
-      return count > 0 ? `Space — ship ${count} produce` : "the shipping crate — bring produce here";
+      return count > 0 ? `Space — ship ${count} goods` : "the shipping crate — bring goods here";
     }
     return null;
   },

@@ -209,13 +209,13 @@ export function drawHud(ctx) {
     ctx.fillText(`${i + 1} ${s} ${state.seeds[s]}`, x, 94);
   });
 
-  // harvest on hand
-  const carried = SEED_ORDER.filter((s) => state.inv[s] > 0).map((s) => `${s} ${state.inv[s]}`);
+  // goods on hand (crops, berries, fish, eggs — anything sellable)
+  const carried = Object.keys(state.inv).filter((g) => state.inv[g] > 0).map((g) => `${g} ${state.inv[g]}`);
   ctx.font = "15px Georgia, serif";
   ctx.fillStyle = "rgba(243,230,200,0.7)";
-  ctx.fillText("Harvest", 34, 120);
+  ctx.fillText("Goods", 34, 120);
   ctx.fillStyle = "rgba(243,230,200,0.9)";
-  ctx.fillText(carried.length ? carried.join("  ") : "—", 110, 120);
+  ctx.fillText(carried.length ? carried.join("  ") : "—", 100, 120);
 
   // context hint
   ctx.font = "16px Georgia, serif";
