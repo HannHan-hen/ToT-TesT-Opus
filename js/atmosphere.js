@@ -49,11 +49,11 @@ for (const [cx, cy] of [[0, 0], [W, 0], [0, H], [W, H]]) {
 const smoke = [];
 let smokeTimer = 0;
 
-export function updateSmoke(dt, originX, originY) {
+export function updateSmoke(dt, origins = []) {
   smokeTimer -= dt;
   if (smokeTimer <= 0) {
     smokeTimer = 0.55;
-    smoke.push({ x: originX, y: originY, age: 0, life: 5, seed: Math.random() * 6 });
+    for (const o of origins) smoke.push({ x: o.x, y: o.y, age: 0, life: 5, seed: Math.random() * 6 });
   }
   for (let i = smoke.length - 1; i >= 0; i--) {
     const p = smoke[i];

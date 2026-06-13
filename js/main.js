@@ -1,7 +1,7 @@
 import { loadAssets, drawSprite } from "./assets.js";
-import { buildGround, buildStaticEntities, CHIMNEY, W, H } from "./scene.js";
+import { W, H } from "./state.js";
 import { drawAtmosphere, updateSmoke } from "./atmosphere.js";
-import { initGame, updateGame, dynamicEntities, drawHud, pointerTarget } from "./game.js";
+import { initGame, updateGame, frameData, drawHud, pointerTarget } from "./game.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -16,8 +16,6 @@ addEventListener("resize", fit);
 fit();
 
 await loadAssets();
-const ground = buildGround();
-const statics = buildStaticEntities();
 initGame();
 document.getElementById("loading").remove();
 
@@ -34,12 +32,12 @@ function frame(now) {
 
   updateGame(dt, t);
 
+  const { ground, entities, chimneys } = frameData(t);
   ctx.drawImage(ground, 0, 0);
-  const ents = statics.concat(dynamicEntities(t));
-  ents.sort((a, b) => a.y - b.y);
-  for (const e of ents) drawSprite(ctx, e.key, e.x, e.y, e.opts);
+  entities.sort((a, b) => a.y - b.y);
+  for (const e of entities) drawSprite(ctx, e.key, e.x, e.y, e.opts);
 
-  updateSmoke(dt, CHIMNEY.x, CHIMNEY.y);
+  updateSmoke(dt, chimneys);
   drawAtmosphere(ctx, t);
   drawHud(ctx);
 

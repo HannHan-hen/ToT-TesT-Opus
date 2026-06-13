@@ -3,6 +3,14 @@
     "src": "assets/sprites/cottage_spring.png",
     "shadowScale": 0.45
   },
+  "cottage_summer": {
+    "src": "assets/sprites/cottage_summer.png",
+    "shadowScale": 0.45
+  },
+  "cottage_autumn": {
+    "src": "assets/sprites/cottage_autumn.png",
+    "shadowScale": 0.45
+  },
   "pine_1": {
     "src": "assets/sprites/pine_1.png",
     "variantOf": "pine"

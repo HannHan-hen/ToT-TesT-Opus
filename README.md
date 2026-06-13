@@ -8,17 +8,25 @@ A small, cute browser farming game.
 
 - **WASD / arrow keys** to walk, **Space / E** to interact — or just
   **click/tap** where you want to go (interacts on arrival).
-- Stand at the tilled field to **plant** turnip seeds in empty cells and
-  **harvest** mature ones. Turnips take **three days** to grow.
-- A day lasts about a minute; nights pass with a fade.
-- Carry your turnips to the **log crate** (top right) to ship them for gold.
-- Progress saves locally in your browser.
+- Press **1 · 2 · 3** to pick which seed to sow: radish (2-day), turnip
+  (3-day), or carrot (4-day). Stand at the tilled field to **plant** the
+  selected seed in empty cells and **harvest** mature ones.
+- Carry your produce to the **log crate** (top right) to ship it for gold —
+  faster crops pay less, slower crops pay more.
+- Walk out through the **gap in the right-hand fence** to reach the
+  **village**: buy seeds from Marigold, hear tips from Old Pip, and say hello
+  to Jay. (Bramble's blacksmith opens once combat arrives.) Walk back through
+  the village gate to return home.
+- A day lasts about a minute; nights pass with a fade. Progress saves
+  locally in your browser.
 
 ## Where it's headed
 
-What's playable today is the **farm** and its farming loop. The full first
-version — village shops, foraging, fishing, the six-room ruins and its
-bosses, the Starless Set, farm threat, and romancing Jay — is mapped out in
+Playable today: the **farm** (multi-crop growing + shipping) and the
+**village** (Marigold's seed shop, Old Pip, Jay, Bramble). Still to come
+toward the full first version — the forest and foraging, the chicken/egg
+chore, fishing, the six-room ruins and its bosses, the Starless Set, farm
+threat, and romancing Jay — all mapped out in
 [concept/concept.md](concept/concept.md), with the look guided by the
 concept art beside it. We're building toward that, keeping every step as
 cute as the reference.
@@ -26,6 +34,10 @@ cute as the reference.
 ## How it's built
 
 - Plain HTML5 canvas, no build step, no dependencies. `index.html` + `js/`.
+- Each location is a self-contained module in `js/maps/` (the farm, the
+  village, …). `js/game.js` is the shared core — player, day clock, travel
+  between maps, HUD, shop/dialogue panels — and `js/state.js` holds the saved
+  game state. Walking into a gap in the fence travels to the next map.
 - The scene is composed from individual sprites, y-sorted, with the dreamy
   look painted on top in code (`js/atmosphere.js`): warm light grade, god
   rays, drifting edge fog, chimney smoke, vignette.

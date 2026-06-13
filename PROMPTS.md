@@ -1,9 +1,10 @@
 # Asset prompt packs
 
-> **Status:** Packs 1–3 received and integrated, including v2 re-rolls of
-> 2a (plant-only crops), 3a (farmer) and 3c (filled crates — turnip crate
-> and veggie basket banked as spare props). Remaining procedural art:
-> ground/grass texture, smoke, fog, light.
+> **Status:** Packs 1–5 received and integrated. The village (Pack 6) and
+> its two new crops currently run on **procedural placeholders** — prompts
+> below — and the shops temporarily reuse the cottage art. Remaining
+> procedural-only art: radish/carrot crops, the four villagers, dedicated
+> shop buildings; plus smoke, fog and light (painted in code by design).
 
 How this works: copy a prompt below into the image generator, attach the
 reference image noted, paste the result into the chat. I (Claude) run it
@@ -133,6 +134,49 @@ The shared style suffix used in every prompt:
 > corner fence piece turning from horizontal to vertical; a single short
 > mossy fence post; a small closed wooden gate between two posts with a
 > tiny moss-covered arch. [style suffix]
+
+## Pack 6 — the village
+
+> The village reuses the cottage art for shops for now and draws the
+> townsfolk procedurally. These prompts replace those placeholders. Keep the
+> villagers the same chibi proportions and 3/4 angle as the farmer (3a).
+
+### 6a. Radish growth stages (one image, 4 in a row)
+> A 1x4 sprite sheet, left to right, plant-only on a plain magenta
+> background with NO soil or ground, matching the turnip growth sheet:
+> radish stages. Stage 1: two tiny sprout leaves. Stage 2: a small leafy
+> rosette. Stage 3: a leafy rosette with a small round scarlet radish bulb
+> peeking at its base. Stage 4: a plump round bright-red radish with a pale
+> tip and a lush leaf rosette, bulb bottom flat so it can sit in a furrow.
+> [style suffix]
+
+### 6b. Carrot growth stages (one image, 4 in a row)
+> A 1x4 sprite sheet, left to right, plant-only on a plain magenta
+> background with NO soil or ground, matching the turnip growth sheet:
+> carrot stages with feathery green tops. Stage 1: two tiny sprout leaves.
+> Stage 2: a small feathery tuft. Stage 3: a fuller feathery top with an
+> orange carrot shoulder just showing. Stage 4: a bright orange carrot
+> tapering to a point with a big feathery green top, sitting flat so it can
+> rest in a furrow. [style suffix]
+
+### 6c. The four villagers (one image, 2x2 grid)
+> A 2x2 sprite sheet grid of four cute chibi villagers, same proportions and
+> high 3/4 angle as the attached farmer girl, each facing the viewer with a
+> gentle expression, full body, standing. Top-left: Marigold, a kindly older
+> seed-seller with grey hair in a bun, a lavender dress and a cream apron.
+> Top-right: Bramble, a broad cheerful blacksmith with a dark beard, sleeves
+> rolled, a heavy leather-and-steel apron. Bottom-left: Old Pip, a small
+> elderly man with a wide straw hat, white hair and a moss-green tunic,
+> leaning on a stick. Bottom-right: Jay, a shy slender young man, pale skin,
+> straight black hair, grey eyes, a soft blue-grey tunic. [style suffix]
+
+### 6d. Village shop buildings (one image, 2 side by side)
+> Two cute storybook shop buildings side by side on a plain magenta
+> background, same style and high 3/4 angle as the attached cottage. Left: a
+> seed-and-produce shop with a green awning, baskets of vegetables by the
+> door, and flower boxes. Right: a blacksmith's workshop with a stone
+> chimney, an anvil out front, and warm forge-light in the window.
+> [style suffix]
 
 ---
 

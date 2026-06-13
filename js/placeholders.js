@@ -160,6 +160,70 @@ export const painters = {
     }
   },
 
+  radish(ctx, x, y, opts = {}) {
+    const stage = opts.stage ?? 3;
+    const s = opts.h ?? 46;
+    const rng = makeRng(opts.seed ?? 1);
+    if (stage >= 3) {
+      const r = s * 0.32;
+      const by = y - r * 0.8;
+      // round scarlet root with a pale tip and a soft highlight
+      ctx.fillStyle = "#c0392b";
+      ctx.beginPath();
+      ctx.ellipse(x, by, r, r * 0.98, 0, 0, 7);
+      ctx.fill();
+      ctx.fillStyle = "#e0584a";
+      ctx.beginPath();
+      ctx.ellipse(x - r * 0.12, by - r * 0.14, r * 0.7, r * 0.66, 0, 0, 7);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.6)";
+      ctx.beginPath();
+      ctx.ellipse(x - r * 0.34, by - r * 0.08, r * 0.16, r * 0.26, -0.4, 0, 7);
+      ctx.fill();
+      ctx.strokeStyle = "#f0e9dd"; // pale root tip
+      ctx.lineWidth = Math.max(2, r * 0.16);
+      ctx.beginPath();
+      ctx.moveTo(x, by + r * 0.8);
+      ctx.quadraticCurveTo(x + r * 0.12, y + 2, x, y + 4);
+      ctx.stroke();
+    }
+    leafRosette(ctx, x, y, s, stage, rng, "#3c6a31", "#5e9442");
+  },
+
+  carrot(ctx, x, y, opts = {}) {
+    const stage = opts.stage ?? 3;
+    const s = opts.h ?? 46;
+    const rng = makeRng(opts.seed ?? 1);
+    if (stage >= 3) {
+      // an orange shoulder poking from the furrow, tapering down
+      const w = s * 0.34, top = y - s * 0.5;
+      ctx.fillStyle = "#e07b2e";
+      ctx.beginPath();
+      ctx.moveTo(x - w * 0.5, top);
+      ctx.quadraticCurveTo(x - w * 0.55, y - s * 0.12, x, y + 4);
+      ctx.quadraticCurveTo(x + w * 0.55, y - s * 0.12, x + w * 0.5, top);
+      ctx.quadraticCurveTo(x, top - s * 0.12, x - w * 0.5, top);
+      ctx.fill();
+      ctx.fillStyle = "#f2974a";
+      ctx.beginPath();
+      ctx.moveTo(x - w * 0.28, top);
+      ctx.quadraticCurveTo(x - w * 0.2, y - s * 0.2, x, y - 2);
+      ctx.quadraticCurveTo(x + w * 0.1, y - s * 0.3, x + w * 0.18, top);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(150,80,28,0.5)"; // furrow rings
+      ctx.lineWidth = 1.4;
+      for (let i = 1; i <= 3; i++) {
+        const ry = top + (y - top) * (i / 4);
+        ctx.beginPath();
+        ctx.moveTo(x - w * 0.42 * (1 - i * 0.18), ry);
+        ctx.lineTo(x + w * 0.42 * (1 - i * 0.18), ry);
+        ctx.stroke();
+      }
+    }
+    // feathery carrot tops: more leaves, finer, brighter
+    leafRosette(ctx, x, y, s, stage, rng, "#3f7a34", "#73ad4c", stage >= 2 ? 7 : 4);
+  },
+
   soilpatch(ctx, x, y, opts = {}) {
     const w = opts.w ?? 300, h = w * 1.25;
     ctx.fillStyle = "#4a3520";
@@ -232,6 +296,67 @@ export const painters = {
     ctx.arc(x - h * 0.06, y - h * 0.61, h * 0.018, 0, 7);
     ctx.arc(x + h * 0.06, y - h * 0.61, h * 0.018, 0, 7);
     ctx.fill();
+  },
+
+  villager(ctx, x, y, opts = {}) {
+    // chibi townsfolk, recoloured per NPC; same proportions as the farmer
+    const h = opts.h ?? 90;
+    const skin = opts.skin ?? "#f2c79a";
+    const hair = opts.hair ?? "#5a3a22";
+    const dress = opts.dress ?? "#8a6b4a";
+    shadow(ctx, x, y - 1, h * 0.26, h * 0.09, 0.25);
+    // body
+    ctx.fillStyle = dress;
+    ctx.beginPath();
+    ctx.moveTo(x - h * 0.17, y);
+    ctx.quadraticCurveTo(x - h * 0.19, y - h * 0.4, x, y - h * 0.46);
+    ctx.quadraticCurveTo(x + h * 0.19, y - h * 0.4, x + h * 0.17, y);
+    ctx.closePath();
+    ctx.fill();
+    if (opts.apron) {
+      ctx.fillStyle = opts.apron;
+      ctx.beginPath();
+      ctx.moveTo(x - h * 0.1, y);
+      ctx.lineTo(x - h * 0.12, y - h * 0.34);
+      ctx.lineTo(x + h * 0.12, y - h * 0.34);
+      ctx.lineTo(x + h * 0.1, y);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // head
+    ctx.fillStyle = skin;
+    ctx.beginPath();
+    ctx.arc(x, y - h * 0.6, h * 0.16, 0, 7);
+    ctx.fill();
+    // hair cap
+    ctx.fillStyle = hair;
+    ctx.beginPath();
+    ctx.arc(x, y - h * 0.64, h * 0.17, Math.PI * 0.92, Math.PI * 2.08);
+    ctx.fill();
+    if (opts.longHair) {
+      ctx.fillRect(x - h * 0.17, y - h * 0.64, h * 0.06, h * 0.26);
+      ctx.fillRect(x + h * 0.11, y - h * 0.64, h * 0.06, h * 0.26);
+    }
+    if (opts.hat) {
+      ctx.fillStyle = opts.hat;
+      ctx.beginPath();
+      ctx.ellipse(x, y - h * 0.72, h * 0.26, h * 0.07, 0, 0, 7); // brim
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x, y - h * 0.78, h * 0.13, Math.PI, 0); // crown
+      ctx.fill();
+    }
+    // eyes
+    ctx.fillStyle = opts.eyes ?? "#3a2a1a";
+    ctx.beginPath();
+    ctx.arc(x - h * 0.055, y - h * 0.59, h * 0.017, 0, 7);
+    ctx.arc(x + h * 0.055, y - h * 0.59, h * 0.017, 0, 7);
+    ctx.fill();
+  },
+
+  shop(ctx, x, y, opts = {}) {
+    // fallback only; the village reuses the real cottage art for shops
+    painters.cottage(ctx, x, y, opts);
   },
 
   chicken(ctx, x, y, opts = {}) {
@@ -324,6 +449,36 @@ export const painters = {
     ctx.fill();
   },
 };
+
+// Shared leaf rosette used by every root crop: a fan of stemmed leaves
+// rising from the furrow, dark blades with a lighter heart.
+function leafRosette(ctx, x, y, s, stage, rng, dark, light, count) {
+  const leaves = count ?? (stage === 0 ? 2 : stage === 1 ? 4 : 5);
+  const lh = s * (0.18 + stage * 0.09);
+  const top = stage >= 3 ? y - s * 0.78 : y - 2;
+  for (let i = 0; i < leaves; i++) {
+    const a = -Math.PI / 2 + (i - (leaves - 1) / 2) * 0.4 + rng.range(-0.07, 0.07);
+    const ex = x + Math.cos(a) * lh, ey = top + Math.sin(a) * lh;
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = Math.max(2, s * 0.055);
+    ctx.beginPath();
+    ctx.moveTo(x, top + 2);
+    ctx.quadraticCurveTo(x + Math.cos(a) * lh * 0.55, top + Math.sin(a) * lh * 0.85, ex, ey);
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(ex, ey);
+    ctx.rotate(a + Math.PI / 2);
+    ctx.fillStyle = dark;
+    ctx.beginPath();
+    ctx.ellipse(0, -s * 0.05, s * 0.07 + stage * 0.7, s * 0.11 + stage * 1.1, 0, 0, 7);
+    ctx.fill();
+    ctx.fillStyle = light;
+    ctx.beginPath();
+    ctx.ellipse(0, -s * 0.05, s * 0.035 + stage * 0.4, s * 0.07 + stage * 0.7, 0, 0, 7);
+    ctx.fill();
+    ctx.restore();
+  }
+}
 
 function roundedFill(ctx, x, y, w, h, r) {
   ctx.beginPath();
