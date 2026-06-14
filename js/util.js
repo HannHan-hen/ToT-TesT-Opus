@@ -20,18 +20,27 @@ export function offscreen(w, h) {
   return c;
 }
 
+// Soft contact-shadow puff, baked once so placeholder painters can stamp a
+// shadow with a scaled drawImage instead of building a gradient every call.
+const SHADOW_PUFF = (() => {
+  const s = 128;
+  const c = offscreen(s, s);
+  const cx = c.getContext("2d");
+  const g = cx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  g.addColorStop(0, "rgba(30,40,18,1)");
+  g.addColorStop(1, "rgba(30,40,18,0)");
+  cx.fillStyle = g;
+  cx.fillRect(0, 0, s, s);
+  return c;
+})();
+
 // Soft elliptical contact shadow under sprites.
 export function shadow(ctx, x, y, rx, ry, alpha = 0.22) {
   ctx.save();
+  ctx.globalAlpha = alpha;
   ctx.translate(x, y);
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
-  g.addColorStop(0, `rgba(30,40,18,${alpha})`);
-  g.addColorStop(1, "rgba(30,40,18,0)");
   ctx.scale(1, ry / rx);
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(0, 0, rx, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.drawImage(SHADOW_PUFF, -rx, -rx, rx * 2, rx * 2);
   ctx.restore();
 }
 

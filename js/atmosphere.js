@@ -20,6 +20,62 @@ function makePuff(size, inner, outer) {
 const fogPuff = makePuff(256, "rgba(255,250,238,0.85)", "rgba(255,250,238,0)");
 const smokePuff = makePuff(128, "rgba(225,220,210,0.6)", "rgba(225,220,210,0)");
 
+// --- static full-screen overlays, painted once into bitmaps ---
+// These never change frame-to-frame, so we bake each into an offscreen canvas
+// and composite it with a single drawImage instead of rebuilding (and filling)
+// a dozen full-screen gradients every frame.
+function bakeLayer(paint) {
+  const c = offscreen(W, H);
+  paint(c.getContext("2d"));
+  return c;
+}
+
+// warm sun glow from the top-left (drawn with an "overlay" blend each frame)
+const sunGlowLayer = bakeLayer((c) => {
+  const g = c.createRadialGradient(60, 40, 0, 60, 40, 1150);
+  g.addColorStop(0, "rgba(255,214,140,0.7)");
+  g.addColorStop(0.55, "rgba(255,200,130,0.24)");
+  g.addColorStop(1, "rgba(120,110,140,0.12)");
+  c.fillStyle = g;
+  c.fillRect(0, 0, W, H);
+});
+
+// warm-dark vignette (plain source-over)
+const vignetteLayer = bakeLayer((c) => {
+  const g = c.createRadialGradient(W / 2, H / 2 - 40, H * 0.32, W / 2, H / 2, H * 0.78);
+  g.addColorStop(0, "rgba(45,32,18,0)");
+  g.addColorStop(1, "rgba(45,32,18,0.34)");
+  c.fillStyle = g;
+  c.fillRect(0, 0, W, H);
+});
+
+// luminous mist frame hugging the edges. Every stop scales with one alpha, so
+// we bake it at a fixed reference and let the slow "breathing" ride on
+// globalAlpha when we draw it.
+const MIST_BASE = 0.42;
+const mistLayer = bakeLayer((c) => {
+  const mistW = 92;
+  const mist = (x1, y1, x2, y2) => {
+    const lg = c.createLinearGradient(x1, y1, x2, y2);
+    lg.addColorStop(0, `rgba(253,249,238,${MIST_BASE})`);
+    lg.addColorStop(0.55, `rgba(253,249,238,${MIST_BASE * 0.35})`);
+    lg.addColorStop(1, "rgba(253,249,238,0)");
+    c.fillStyle = lg;
+    c.fillRect(0, 0, W, H);
+  };
+  mist(0, 0, mistW, 0);
+  mist(W, 0, W - mistW, 0);
+  mist(0, 0, 0, mistW * 0.85);
+  mist(0, H, 0, H - mistW * 0.85);
+  for (const [cx2, cy2] of [[0, 0], [W, 0], [0, H], [W, H]]) {
+    const rg = c.createRadialGradient(cx2, cy2, 0, cx2, cy2, 250);
+    rg.addColorStop(0, `rgba(253,249,238,${MIST_BASE * 0.9})`);
+    rg.addColorStop(1, "rgba(253,249,238,0)");
+    c.fillStyle = rg;
+    c.fillRect(0, 0, W, H);
+  }
+});
+
 // --- fog field: puffs hugging the frame edges, drifting slowly ---
 const rng = makeRng(7331);
 const fogBlobs = [];
@@ -66,12 +122,7 @@ export function drawAtmosphere(ctx, t) {
   // 1. warm sun glow from the top-left
   ctx.save();
   ctx.globalCompositeOperation = "overlay";
-  let g = ctx.createRadialGradient(60, 40, 0, 60, 40, 1150);
-  g.addColorStop(0, "rgba(255,214,140,0.7)");
-  g.addColorStop(0.55, "rgba(255,200,130,0.24)");
-  g.addColorStop(1, "rgba(120,110,140,0.12)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
+  ctx.drawImage(sunGlowLayer, 0, 0);
   ctx.restore();
 
   // 2. god rays
@@ -125,35 +176,13 @@ export function drawAtmosphere(ctx, t) {
   ctx.globalAlpha = 1;
 
   // 5. vignette — warm-dark, never pure black
-  g = ctx.createRadialGradient(W / 2, H / 2 - 40, H * 0.32, W / 2, H / 2, H * 0.78);
-  g.addColorStop(0, "rgba(45,32,18,0)");
-  g.addColorStop(1, "rgba(45,32,18,0.34)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
+  ctx.drawImage(vignetteLayer, 0, 0);
 
   // 5b. luminous mist frame hugging the very edges (after the vignette so
-  // the rim stays bright), breathing slowly
-  const mistW = 92;
-  const mistA = 0.42 * (0.85 + 0.15 * Math.sin(t * 0.16));
-  const mist = (x1, y1, x2, y2) => {
-    const lg = ctx.createLinearGradient(x1, y1, x2, y2);
-    lg.addColorStop(0, `rgba(253,249,238,${mistA})`);
-    lg.addColorStop(0.55, `rgba(253,249,238,${mistA * 0.35})`);
-    lg.addColorStop(1, "rgba(253,249,238,0)");
-    ctx.fillStyle = lg;
-    ctx.fillRect(0, 0, W, H);
-  };
-  mist(0, 0, mistW, 0);
-  mist(W, 0, W - mistW, 0);
-  mist(0, 0, 0, mistW * 0.85);
-  mist(0, H, 0, H - mistW * 0.85);
-  for (const [cx2, cy2] of [[0, 0], [W, 0], [0, H], [W, H]]) {
-    const rg = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, 250);
-    rg.addColorStop(0, `rgba(253,249,238,${mistA * 0.9})`);
-    rg.addColorStop(1, "rgba(253,249,238,0)");
-    ctx.fillStyle = rg;
-    ctx.fillRect(0, 0, W, H);
-  }
+  // the rim stays bright), breathing slowly via globalAlpha
+  ctx.globalAlpha = 0.85 + 0.15 * Math.sin(t * 0.16);
+  ctx.drawImage(mistLayer, 0, 0);
+  ctx.globalAlpha = 1;
 
   // 6. final unifying warm wash
   ctx.save();

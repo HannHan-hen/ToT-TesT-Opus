@@ -3,6 +3,7 @@
 // placeholder painter. Real images draw bottom-center anchored, same as
 // painters, so swapping art never moves the layout.
 import { painters } from "./placeholders.js";
+import { offscreen } from "./util.js";
 
 const images = new Map();
 const variants = new Map(); // logical key -> [loaded sprite keys]
@@ -65,19 +66,29 @@ export function drawSprite(ctx, key, x, y, opts = {}) {
   if (painter) painter(ctx, x, y, opts);
 }
 
+// Contact-shadow puff, baked once. The falloff (1 → 0.55 → 0) matches the old
+// per-sprite gradient; we draw it scaled and alpha-modulated instead of
+// rebuilding a radial gradient for every sprite on every frame.
+const SHADOW_PUFF = (() => {
+  const s = 128;
+  const c = offscreen(s, s);
+  const cx = c.getContext("2d");
+  const g = cx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  g.addColorStop(0, "rgba(28,38,16,1)");
+  g.addColorStop(0.55, "rgba(28,38,16,0.55)");
+  g.addColorStop(1, "rgba(28,38,16,0)");
+  cx.fillStyle = g;
+  cx.fillRect(0, 0, s, s);
+  return c;
+})();
+
 function softShadow(ctx, x, y, rx, alpha) {
   // contact shadow: offset slightly down-right to agree with the
   // top-left sun, denser at the core than the old wash
   ctx.save();
+  ctx.globalAlpha = alpha;
   ctx.translate(x + rx * 0.14, y - 3);
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
-  g.addColorStop(0, `rgba(28,38,16,${alpha})`);
-  g.addColorStop(0.55, `rgba(28,38,16,${alpha * 0.55})`);
-  g.addColorStop(1, "rgba(28,38,16,0)");
   ctx.scale(1, 0.34);
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(0, 0, rx, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.drawImage(SHADOW_PUFF, -rx, -rx, rx * 2, rx * 2);
   ctx.restore();
 }
