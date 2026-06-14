@@ -87,6 +87,7 @@ function softShadow(ctx, x, y, rx, alpha) {
   // top-left sun, denser at the core than the old wash
   ctx.save();
   ctx.globalAlpha = alpha;
+  ctx.imageSmoothingQuality = "low"; // a blurry puff needs no fancy filtering
   ctx.translate(x + rx * 0.14, y - 3);
   ctx.scale(1, 0.34);
   ctx.drawImage(SHADOW_PUFF, -rx, -rx, rx * 2, rx * 2);

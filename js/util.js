@@ -38,6 +38,7 @@ const SHADOW_PUFF = (() => {
 export function shadow(ctx, x, y, rx, ry, alpha = 0.22) {
   ctx.save();
   ctx.globalAlpha = alpha;
+  ctx.imageSmoothingQuality = "low"; // a blurry puff needs no fancy filtering
   ctx.translate(x, y);
   ctx.scale(1, ry / rx);
   ctx.drawImage(SHADOW_PUFF, -rx, -rx, rx * 2, rx * 2);
