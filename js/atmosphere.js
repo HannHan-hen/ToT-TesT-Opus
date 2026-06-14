@@ -40,20 +40,22 @@ const sunGlowLayer = bakeLayer((c) => {
   c.fillRect(0, 0, W, H);
 });
 
-// warm-dark vignette (plain source-over)
-const vignetteLayer = bakeLayer((c) => {
-  const g = c.createRadialGradient(W / 2, H / 2 - 40, H * 0.32, W / 2, H / 2, H * 0.78);
+// Unified "grade" overlay: the warm-dark vignette, the luminous edge mist, and
+// the final warm wash — all source-over — baked into one bitmap so the whole
+// grade is a single cheap draw. Previously these were three separate
+// full-screen passes (one of them an expensive soft-light blend) plus a slow
+// mist "breathing"; folding them together costs one drawImage for a marginally
+// flatter look.
+const MIST_BASE = 0.42;
+const gradeLayer = bakeLayer((c) => {
+  // warm-dark vignette, never pure black
+  let g = c.createRadialGradient(W / 2, H / 2 - 40, H * 0.32, W / 2, H / 2, H * 0.78);
   g.addColorStop(0, "rgba(45,32,18,0)");
   g.addColorStop(1, "rgba(45,32,18,0.34)");
   c.fillStyle = g;
   c.fillRect(0, 0, W, H);
-});
 
-// luminous mist frame hugging the edges. Every stop scales with one alpha, so
-// we bake it at a fixed reference and let the slow "breathing" ride on
-// globalAlpha when we draw it.
-const MIST_BASE = 0.42;
-const mistLayer = bakeLayer((c) => {
+  // luminous mist hugging the very edges (over the vignette so the rim stays bright)
   const mistW = 92;
   const mist = (x1, y1, x2, y2) => {
     const lg = c.createLinearGradient(x1, y1, x2, y2);
@@ -74,6 +76,11 @@ const mistLayer = bakeLayer((c) => {
     c.fillStyle = rg;
     c.fillRect(0, 0, W, H);
   }
+
+  // unifying warm wash — a flat source-over tint now, where it used to be a
+  // separate full-screen soft-light pass
+  c.fillStyle = "rgba(255,196,120,0.1)";
+  c.fillRect(0, 0, W, H);
 });
 
 // --- fog field: puffs hugging the frame edges, drifting slowly ---
@@ -175,19 +182,6 @@ export function drawAtmosphere(ctx, t) {
   }
   ctx.globalAlpha = 1;
 
-  // 5. vignette — warm-dark, never pure black
-  ctx.drawImage(vignetteLayer, 0, 0);
-
-  // 5b. luminous mist frame hugging the very edges (after the vignette so
-  // the rim stays bright), breathing slowly via globalAlpha
-  ctx.globalAlpha = 0.85 + 0.15 * Math.sin(t * 0.16);
-  ctx.drawImage(mistLayer, 0, 0);
-  ctx.globalAlpha = 1;
-
-  // 6. final unifying warm wash
-  ctx.save();
-  ctx.globalCompositeOperation = "soft-light";
-  ctx.fillStyle = "rgba(255,196,120,0.26)";
-  ctx.fillRect(0, 0, W, H);
-  ctx.restore();
+  // 5. unified grade — vignette, edge mist, and warm wash, in a single draw
+  ctx.drawImage(gradeLayer, 0, 0);
 }
