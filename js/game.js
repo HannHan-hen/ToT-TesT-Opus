@@ -171,13 +171,18 @@ export function updateGame(dt, t) {
 
 // Everything the renderer needs for this frame: the ground bitmap, the full
 // y-sortable entity list (scenery + actors + player), and smoke origins.
+const frameEnts = []; // reused each frame so the render list isn't reallocated
 export function frameData(t) {
   const map = currentMap();
-  const ents = staticsFor(map.id).concat(map.entities(t));
+  const statics = staticsFor(map.id);
+  const dynamic = map.entities(t);
+  frameEnts.length = 0;
+  for (let i = 0; i < statics.length; i++) frameEnts.push(statics[i]);
+  for (let i = 0; i < dynamic.length; i++) frameEnts.push(dynamic[i]);
   const bob = player.moving ? Math.abs(Math.sin(t * 11)) * 3 : 0;
-  ents.push({ key: "farmer", x: player.x, y: player.y - bob,
+  frameEnts.push({ key: "farmer", x: player.x, y: player.y - bob,
     opts: { h: 122, flipX: player.facing < 0, fallback: "character" } });
-  return { ground: groundFor(map.id), entities: ents, chimneys: map.chimneys };
+  return { ground: groundFor(map.id), entities: frameEnts, chimneys: map.chimneys };
 }
 
 // ---- HUD ----
