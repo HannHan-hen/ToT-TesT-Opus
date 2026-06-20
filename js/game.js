@@ -181,7 +181,7 @@ export function frameData(t) {
   for (let i = 0; i < dynamic.length; i++) frameEnts.push(dynamic[i]);
   const bob = player.moving ? Math.abs(Math.sin(t * 11)) * 3 : 0;
   frameEnts.push({ key: "farmer", x: player.x, y: player.y - bob,
-    opts: { h: 122, flipX: player.facing < 0, fallback: "character" } });
+    opts: { h: 122, flipX: player.facing < 0, fallback: "character", snap: true } });
   return { ground: groundFor(map.id), entities: frameEnts, chimneys: map.chimneys };
 }
 

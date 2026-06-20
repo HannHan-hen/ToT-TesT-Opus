@@ -48,6 +48,18 @@ export function drawSprite(ctx, key, x, y, opts = {}) {
     const { img, meta } = entry;
     const w = opts.w ?? opts.h ?? img.width;
     const h = w * (img.height / img.width);
+    if (opts.snap) {
+      // Pin moving sprites (the player, and future animated actors) to the
+      // backbuffer pixel grid. A sprite that moves sits at a fresh sub-pixel
+      // offset every frame, so the render-scale downsample + image smoothing
+      // re-interpolate it into a soft shimmer; static props only look crisp
+      // because their offset never changes. We snap in *device* space using
+      // the live transform — snapping logical coords would leave a fraction
+      // after the 0.75 scale — so the offset stays constant: stable and sharp.
+      const m = ctx.getTransform();
+      x = (Math.round(x * m.a + m.e) - m.e) / m.a;
+      y = (Math.round(y * m.d + m.f) - m.f) / m.d;
+    }
     if (meta.shadow !== false) {
       softShadow(ctx, x, y, w * (meta.shadowScale ?? 0.42), meta.shadowAlpha ?? 0.34);
     }
